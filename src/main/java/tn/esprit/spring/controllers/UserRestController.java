@@ -22,7 +22,7 @@ public class UserRestController {
 	msg="There is already a user registered with the user name provided";
 	} else {
 	userService.saveUser(user);
-	msg="OK"; }
+	msg="OK, User added !"; }
 	return msg; }
 	
 }
