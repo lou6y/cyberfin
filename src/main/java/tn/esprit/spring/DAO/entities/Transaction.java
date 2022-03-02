@@ -92,7 +92,7 @@ public class Transaction implements Serializable{
 	public void setTransactiontype(TransactionType transactiontype) {
 		this.transactiontype = transactiontype;
 	}
-	
+	 
 	@ManyToMany
 	private Set<Claim> TransactionClaims;
 	
