@@ -11,7 +11,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table( name = "Claim")
@@ -38,17 +42,17 @@ public class Claim implements Serializable{
 	}
 	
 
-	public Claim(Long idClaim, Status status, TransactionType topic, String description,
-			Set<Transaction> transactions) {
+
+
+	public Claim(Long idClaim, TransactionType topic, String description, Status status, Transaction transaction) {
 		super();
 		this.idClaim = idClaim;
-		this.status = status;
 		this.topic = topic;
 		this.description = description;
-		this.transactions = transactions;
+		this.status = status;
+		this.transaction = transaction;
 	}
 
-	
 
 	public Long getIdClaim() {
 		return idClaim;
@@ -57,16 +61,6 @@ public class Claim implements Serializable{
 
 	public void setIdClaim(Long idClaim) {
 		this.idClaim = idClaim;
-	}
-
-
-	public Status getStatus() {
-		return status;
-	}
-
-
-	public void setStatus(Status status) {
-		this.status = status;
 	}
 
 
@@ -90,20 +84,31 @@ public class Claim implements Serializable{
 	}
 
 
-	public Set<Transaction> getTransactions() {
-		return transactions;
+	public Status getStatus() {
+		return status;
 	}
 
 
-	public void setTransactions(Set<Transaction> transactions) {
-		this.transactions = transactions;
+	public void setStatus(Status status) {
+		this.status = status;
+	}
+
+
+	public Transaction getTransaction() {
+		return transaction;
+	}
+
+
+	public void setTransaction(Transaction transaction) {
+		this.transaction = transaction;
 	}
 
 
 
-
-	@ManyToMany(mappedBy="TransactionClaims")
-	private Set<Transaction> transactions;
+	@JsonBackReference
+	@ManyToOne
+	Transaction transaction;
+	
 	
 	
 	
