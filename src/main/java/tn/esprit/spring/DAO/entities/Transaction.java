@@ -12,6 +12,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -123,6 +124,9 @@ public class Transaction implements Serializable{
 	@JsonManagedReference
 	@OneToMany(cascade = CascadeType.ALL, mappedBy="transaction")
 	private Set<Claim> claim;
+	
+	@ManyToOne
+	Account accountransaction;
 	
 	
 }
