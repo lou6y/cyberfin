@@ -35,8 +35,7 @@ public class ClaimServiceImpl implements ClaimService{
 
 	@Override
 	public Claim updateClaim(Claim c) {
-		// TODO Auto-generated method stub
-		return null;
+		return ClaimRep.save(c);
 	}
 
 	@Override

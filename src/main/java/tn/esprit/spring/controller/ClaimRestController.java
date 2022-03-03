@@ -32,7 +32,7 @@ import tn.esprit.spring.services.Interfaces.ClaimService;
 	return listClaims;
 	}
 	
-	// http://localhost:8083/SpringMVC/claim/retrieve-claim/8
+	// http://localhost:8083/SpringMVC/claim/retrieve-claim/
 	@GetMapping("/retrieve-claim/{claim-id}")
 	@ResponseBody
 	public Claim retrieveClaim(@PathVariable("claim-id") Long claimId) {
