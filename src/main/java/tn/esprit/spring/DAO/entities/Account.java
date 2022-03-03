@@ -58,6 +58,6 @@ public class Account implements Serializable {
 	private Set<Association> Associations;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy="accountransaction")
-	private Set<Transaction> Transactions;
+	private Set<Transaction> TransactionsAccounts;
 	
 }
