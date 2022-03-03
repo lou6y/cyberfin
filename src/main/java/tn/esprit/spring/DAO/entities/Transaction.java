@@ -30,10 +30,10 @@ public class Transaction implements Serializable{
 	private Date dateTransaction;
 	
 	@Column(name="sumToTransfer")
-	private String sumToTransfer;
+	private int sumToTransfer;
 	
 	@Column(name="totalSum")
-	private String totalSum;
+	private int totalSum;
 	
 	@Enumerated(EnumType.STRING)
 	private TransactionType  transactiontype;
@@ -43,7 +43,7 @@ public class Transaction implements Serializable{
 		
 	}
 
-	public Transaction(Long idTransaction, Date dateTransaction, String sumToTransfer, String totalSum,
+	public Transaction(Long idTransaction, Date dateTransaction, int sumToTransfer, int totalSum,
 			TransactionType transactiontype) {
 		super();
 		this.idTransaction = idTransaction;
@@ -69,19 +69,19 @@ public class Transaction implements Serializable{
 		this.dateTransaction = dateTransaction;
 	}
 
-	public String getSumToTransfer() {
+	public int getSumToTransfer() {
 		return sumToTransfer;
 	}
 
-	public void setSumToTransfer(String sumToTransfer) {
+	public void setSumToTransfer(int sumToTransfer) {
 		this.sumToTransfer = sumToTransfer;
 	}
 
-	public String getTotalSum() {
+	public int getTotalSum() {
 		return totalSum;
 	}
 
-	public void setTotalSum(String totalSum) {
+	public void setTotalSum(int totalSum) {
 		this.totalSum = totalSum;
 	}
 

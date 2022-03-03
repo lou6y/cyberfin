@@ -11,8 +11,3 @@ public class CyberFinApplication {
 	}
 
 }
-<<<<<<< HEAD
-   //cc
-=======
-//
->>>>>>> refs/remotes/origin/Kenza
