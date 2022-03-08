@@ -9,5 +9,5 @@ public interface UserService {
 	public User findByUserName (String userName);
 	public List<User> retrieveAllUsers();
 	public void deleteUser(Long id);
-	public void addRoleToUser(String userName, String roleName);
+	public void addRoleToUser(String userName, String role);
 }
