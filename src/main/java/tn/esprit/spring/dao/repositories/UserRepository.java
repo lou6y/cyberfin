@@ -9,4 +9,7 @@ import tn.esprit.spring.dao.entities.User;
 @Repository
 public interface UserRepository extends CrudRepository<User, Long>{
 	User findByUserName (String userName);
+	User findByEmail(String email);
+	User findByToken(String token);
+    User findByVerificationCode(String verificationCode);
 }

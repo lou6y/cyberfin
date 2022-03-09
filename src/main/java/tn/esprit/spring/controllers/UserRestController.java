@@ -1,12 +1,14 @@
 package tn.esprit.spring.controllers;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,8 +20,10 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.auth0.jwt.JWT;
@@ -40,14 +44,18 @@ public class UserRestController {
 	UserService userService ; 
 	
 	@PostMapping("/registration")
-	public String createNewUser( @RequestBody User user) {
+	public String createNewUser( @RequestBody User user) throws UnsupportedEncodingException, MessagingException {
 	String msg="";
 	User userExists = userService.findByUserName(user.getUserName());
 	if (userExists != null) {
 	msg="There is already a user registered with the user name provided";
 	} else {
 	userService.saveUser(user);
-	msg="OK, User added !"; }
+	msg="OK, User added !"; 
+	String response= user.getVerificationCode();
+	response = "http://localhost:8082/CyberFin/user/registration/verify?code=" + response;
+	userService.sendEmail(user.getEmail(), response);
+	return response;}
 	return msg; }
 	
 	@GetMapping("/token/refresh")
@@ -112,5 +120,32 @@ public class UserRestController {
 		String msg="Role added!";
 		return msg;
 	}
+
+	@PostMapping("/registration/forgot-password")
+	public String forgotPassword(@RequestParam String email) throws UnsupportedEncodingException, MessagingException {
+
+		String response = userService.forgotPassword(email);
+
+		if (!response.startsWith("Invalid")) {
+			response = "http://localhost:8082/CyberFin/user/registration/reset-password?token=" + response;
+		}
+		userService.sendEmail(email, response);
+		return response;
+	}
+
+	@PutMapping("/registration/reset-password")
+	public String resetPassword(@RequestParam String token,
+			@RequestParam String password) {
+
+		return userService.resetPassword(token, password);
+	}
 	
+	@GetMapping("/registration/verify")
+	public String verifyUser(@RequestParam String code) {
+	    if (userService.verify(code)) {
+	        return "verify_success";
+	    } else {
+	        return "verify_fail";
+	    }
+	}
 }

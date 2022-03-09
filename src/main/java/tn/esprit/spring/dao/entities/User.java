@@ -2,6 +2,7 @@ package tn.esprit.spring.dao.entities;
 
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Set;
 
@@ -46,6 +47,10 @@ public class User implements Serializable {
 	private Date dateCreation;
 	private Boolean active;
 	private Boolean verified;
+	private String token;
+	@Column(columnDefinition = "TIMESTAMP")
+	private LocalDateTime tokenCreationDate;
+	private String verificationCode;
 	@ManyToMany(cascade = CascadeType.PERSIST, fetch
 			= FetchType.EAGER)
 			private Set<Role> roles;
@@ -195,6 +200,30 @@ public class User implements Serializable {
 	}
 	public void setAccount(Account account) {
 		this.account = account;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public LocalDateTime getTokenCreationDate() {
+		return tokenCreationDate;
+	}
+
+	public void setTokenCreationDate(LocalDateTime tokenCreationDate) {
+		this.tokenCreationDate = tokenCreationDate;
+	}
+
+	public String getVerificationCode() {
+		return verificationCode;
+	}
+
+	public void setVerificationCode(String verificationCode) {
+		this.verificationCode = verificationCode;
 	}
 	
 	

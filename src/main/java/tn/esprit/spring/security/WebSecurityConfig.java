@@ -3,6 +3,7 @@ package tn.esprit.spring.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,6 +33,9 @@ public class WebSecurityConfig  extends WebSecurityConfigurerAdapter {
 		CustomAuthenticationFilter customAuthFilter = new CustomAuthenticationFilter(authenticationManagerBean()) ; 
 		http.csrf().disable();
 		http.sessionManagement ().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+		http.authorizeRequests().antMatchers(HttpMethod.GET , "/**/registration/**").permitAll() ; 
+		http.authorizeRequests().antMatchers(HttpMethod.POST , "/**/registration/**").permitAll() ; 
+		http.authorizeRequests().antMatchers(HttpMethod.PUT , "/**/registration/**").permitAll() ; 
 		http.authorizeRequests().antMatchers("/CyberFin/login","/CyberFin/user/token/refresh").permitAll() ; 
 		http.authorizeRequests().antMatchers("/CyberFin/user/showAllUsers/").hasAnyAuthority("ROLE_ADMIN") ; 
 		http.authorizeRequests ().anyRequest().authenticated();
