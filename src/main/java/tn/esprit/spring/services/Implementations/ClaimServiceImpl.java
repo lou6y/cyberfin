@@ -47,7 +47,7 @@ public class ClaimServiceImpl implements ClaimService{
     public String verifyBadWords(String sentence)  {
 
         List<String> badWords =
-                Arrays.asList("fuck","shit","hoe","f.uck","f-uck","f_uck","s_hit","kill","k_ill","k-ill","k.ill","h_oe","killl","h_o_e","k_i_l_l");
+                Arrays.asList("bb","cc");
         String[] words = sentence.split("\\s+");
         for (int i = 0; i < words.length; i++) {
             if (badWords.contains(words[i]))
