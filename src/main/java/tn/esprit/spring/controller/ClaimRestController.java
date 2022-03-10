@@ -43,7 +43,9 @@ import tn.esprit.spring.services.Interfaces.ClaimService;
 	@PostMapping("/add-claim")
 	@ResponseBody
 	public Claim addClaim(@RequestBody Claim c)
-	{
+	{ //badwords
+		c.setDescription(claimService.verifyBadWords(c.getDescription()));
+		
 	Claim claim = claimService.addClaim(c);
 	return claim;
 	}

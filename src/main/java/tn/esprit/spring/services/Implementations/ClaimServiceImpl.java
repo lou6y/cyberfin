@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import tn.esprit.spring.DAO.entities.Claim;
 import tn.esprit.spring.DAO.repositories.ClaimRepository;
 import tn.esprit.spring.services.Interfaces.ClaimService;
-
+import java.util.Arrays;
 @Service
 public class ClaimServiceImpl implements ClaimService{
 
@@ -43,5 +43,26 @@ public class ClaimServiceImpl implements ClaimService{
 		return ClaimRep.findById(id).get();
 	}
 	
+	@Override
+    public String verifyBadWords(String sentence)  {
+
+        List<String> badWords =
+                Arrays.asList("fuck","shit","hoe","f.uck","f-uck","f_uck","s_hit","kill","k_ill","k-ill","k.ill","h_oe","killl","h_o_e","k_i_l_l");
+        String[] words = sentence.split("\\s+");
+        for (int i = 0; i < words.length; i++) {
+            if (badWords.contains(words[i]))
+                words[i] = badWordsToStars(words[i]);
+        }
+        return String.join(" ", words);
+    }
+
+	public String badWordsToStars(String badwords) {
+
+        String s = "";
+        for (int i = 0; i < badwords.length(); i++) {
+            s = s + "*";
+        }
+        return s;
+    }
 
 }

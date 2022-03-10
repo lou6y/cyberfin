@@ -15,4 +15,5 @@ public interface ClaimService {
 	Claim updateClaim(Claim c);
 	Claim retrieveClaim(Long id);
 
+	public String verifyBadWords(String sentence);
 }
