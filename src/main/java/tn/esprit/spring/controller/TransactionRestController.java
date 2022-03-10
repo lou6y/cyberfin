@@ -33,7 +33,7 @@ public class TransactionRestController {
 		return listTransactions;
 		}
 	
-	// http://localhost:8083/SpringMVC/transaction/retrieve-transaction/
+	// http://localhost:8083/SpringMVC/transaction/retrieve-transaction/1
 		@GetMapping("/retrieve-transaction/{transaction-id}")
 		@ResponseBody
 		public Transaction retrieveTransaction(@PathVariable("transaction-id") Long transactionId) {
@@ -51,19 +51,22 @@ public class TransactionRestController {
 
 
 
+		//http://localhost:8083/SpringMVC/transaction/modify-transaction
+		@PutMapping("/modify-transaction")
+		@ResponseBody
+		public Transaction modifyTransaction(@RequestBody Transaction transaction) {
+		return transactionService.updateTransaction(transaction);
+		}
+		
+		
 		// http://localhost:8083/SpringMVC/transaction/remove-transaction/{transaction-id}
 		@DeleteMapping("/remove-transaction/{transaction-id}")
 		@ResponseBody
 		public void removeTransaction(@PathVariable("transaction-id") Long transactionId) {
 		transactionService.deleteTransaction(transactionId);
 		}
-
-		// http://localhost:8083/SpringMVC/transaction/modify-transaction
-		@PutMapping("/modify-transaction")
-		@ResponseBody
-		public Transaction modifyTransaction(@RequestBody Transaction transaction) {
-		return transactionService.updateTransaction(transaction);
-		}
+		
+	
 	
 
 }

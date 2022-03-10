@@ -26,9 +26,6 @@ public class Claim implements Serializable{
 	@Column(name="idClaim")
 	private Long idClaim;
 	
-	@Enumerated(EnumType.STRING)
-	private TransactionType topic;
-	
 	@Column(name="description")
 	private String description;
 	
@@ -40,64 +37,44 @@ public class Claim implements Serializable{
 	public Claim() {
 		super();
 	}
-	
 
-
-
-	public Claim(Long idClaim, TransactionType topic, String description, Status status, Transaction transaction) {
+	public Claim(Long idClaim, String description, Status status, Transaction transaction) {
 		super();
 		this.idClaim = idClaim;
-		this.topic = topic;
 		this.description = description;
 		this.status = status;
 		this.transaction = transaction;
 	}
-
+	
+	
 
 	public Long getIdClaim() {
 		return idClaim;
 	}
 
-
 	public void setIdClaim(Long idClaim) {
 		this.idClaim = idClaim;
 	}
-
-
-	public TransactionType getTopic() {
-		return topic;
-	}
-
-
-	public void setTopic(TransactionType topic) {
-		this.topic = topic;
-	}
-
 
 	public String getDescription() {
 		return description;
 	}
 
-
 	public void setDescription(String description) {
 		this.description = description;
 	}
-
 
 	public Status getStatus() {
 		return status;
 	}
 
-
 	public void setStatus(Status status) {
 		this.status = status;
 	}
 
-
 	public Transaction getTransaction() {
 		return transaction;
 	}
-
 
 	public void setTransaction(Transaction transaction) {
 		this.transaction = transaction;

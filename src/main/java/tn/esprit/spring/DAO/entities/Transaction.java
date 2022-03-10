@@ -41,7 +41,7 @@ public class Transaction implements Serializable{
 	private int totalSum;
 	
 	@Enumerated(EnumType.STRING)
-	private TransactionType  transactiontype;
+	private TransactionType transactiontype;
 
 	public Transaction() {
 		super();
