@@ -1,9 +1,12 @@
 package tn.esprit.spring.controller;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import tn.esprit.spring.DAO.entities.Transaction;
+import tn.esprit.spring.DAO.entities.TransactionType;
 import tn.esprit.spring.services.Interfaces.TransactionService;
 
 @RestController
@@ -67,14 +71,40 @@ public class TransactionRestController {
 		transactionService.deleteTransaction(transactionId);
 		}
 		
-		//pas le meme nom
+		//statistic
+		//5dit mel service w badalt esm
 		@GetMapping("/transactionWeek")
 	    public Map<String, Integer> TransactionWeek()
 	    {
 	        return transactionService.NbrTransactionWeek() ;
 	    }
-
 		
+		//SELECT
+		@GetMapping("/selecttransactionJPQL/{transactiontype}")
+		@ResponseBody
+		public List<Transaction> selectTransactionByTransactType(@Param("transactiontype") TransactionType transactiontype)
+	    {
+	        return transactionService.retrieveTransactionByTransactType(transactiontype) ;
+	    }
+
+
+		//DELETE
+		@Transactional
+				@DeleteMapping("/deletetransactionJPQL/{transactiontype}")
+				@ResponseBody
+				public int delTransactionByTransactType(@Param("transactiontype") TransactionType transactiontype)
+			    {
+			        return transactionService.deleteTransactionByTransactType(transactiontype) ;
+			    }
+		
+		//INSERT
+		@PostMapping("/inserttransactionJPQL/{dateT}/{sumToT}/{totalSum}/{transactiontype}")
+		@ResponseBody
+		public void insertTransactionByTransactType(@PathVariable("dateT") Date dateTransaction, @PathVariable("sumToT") int sumToTransfer,
+				@PathVariable("totalSum") int totalSum, @PathVariable("transactiontype") TransactionType transactiontype)
+	    {
+	         transactionService.insertTransact(dateTransaction,sumToTransfer,totalSum, transactiontype) ;
+	    }
 	
 
 }

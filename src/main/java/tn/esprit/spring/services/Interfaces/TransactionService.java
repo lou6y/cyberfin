@@ -1,9 +1,13 @@
 package tn.esprit.spring.services.Interfaces;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.data.repository.query.Param;
+
 import tn.esprit.spring.DAO.entities.Transaction;
+import tn.esprit.spring.DAO.entities.TransactionType;
 
 
 public interface TransactionService {
@@ -18,5 +22,11 @@ public interface TransactionService {
 	Transaction retrieveTransaction(Long id);
 	
 	public Map<String, Integer> NbrTransactionWeek();
+	
+	List<Transaction> retrieveTransactionByTransactType(TransactionType transactiontype);
+	//int updateTransactionByTransactType(TransactionType transactiontype);
+	int deleteTransactionByTransactType(TransactionType transactiontype);
+	
+	void insertTransact(Date dateTransaction, int sumToTransfer,int totalSum, TransactionType transactiontype);
 
 }
