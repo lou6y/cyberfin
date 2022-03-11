@@ -60,7 +60,7 @@ public class AssociationRestController {
 					associationservice.deleteAssociation(id);
 				}
 				
-				//http://localhost:8083/SpringMVC/association/modify-association
+				//http://localhost:8083/CyberFin/association/modify-association
 					@PutMapping("/modify-association")
 					@ResponseBody
 					public Association modifyTransaction(@RequestBody Association a) {
