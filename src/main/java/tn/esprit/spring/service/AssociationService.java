@@ -8,10 +8,10 @@ import tn.esprit.spring.entite.Association;
 
 public interface AssociationService {
 
-	List<Association> retriveAllClients();
+	List<Association> retriveAllAssociation();
 	Association addAssociation(Association c);
 	void deleteAssociation(Long id);
 	Association uploadAssociation(Association c);
-	Association retrieveAssociation(Long id);
+	Association retrieveAssociationBYID(Long id);
 	
 }

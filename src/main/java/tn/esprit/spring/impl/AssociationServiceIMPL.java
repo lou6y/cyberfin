@@ -3,16 +3,17 @@ package tn.esprit.spring.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import tn.esprit.spring.entite.Association;
 import tn.esprit.spring.repository.AssociationRepository;
 import tn.esprit.spring.service.AssociationService;
-
+@Service
 public class AssociationServiceIMPL implements AssociationService{
 @Autowired
 private AssociationRepository rep ;
 	@Override
-	public List<Association> retriveAllClients() {
+	public List<Association> retriveAllAssociation() {
 		
 		return (List<Association>)rep.findAll();
 	}
@@ -36,7 +37,7 @@ private AssociationRepository rep ;
 	}
 
 	@Override
-	public Association retrieveAssociation(Long id) {
+	public Association retrieveAssociationBYID(Long id) {
 		// TODO Auto-generated method stub
 		return rep.findById(id).get();
 	}
