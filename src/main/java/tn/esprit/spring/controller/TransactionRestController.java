@@ -71,21 +71,7 @@ public class TransactionRestController {
 		transactionService.deleteTransaction(transactionId);
 		}
 		
-		//statistic
-		//5dit mel service w badalt esm
-		@GetMapping("/transactionWeek")
-	    public Map<String, Integer> TransactionWeek()
-	    {
-	        return transactionService.NbrTransactionWeek() ;
-	    }
 		
-		//SELECT
-		@GetMapping("/selecttransactionJPQL/{transactiontype}")
-		@ResponseBody
-		public List<Transaction> selectTransactionByTransactType(@Param("transactiontype") TransactionType transactiontype)
-	    {
-	        return transactionService.retrieveTransactionByTransactType(transactiontype) ;
-	    }
 
 
 		//DELETE
@@ -105,6 +91,24 @@ public class TransactionRestController {
 	    {
 	         transactionService.insertTransact(dateTransaction,sumToTransfer,totalSum, transactiontype) ;
 	    }
+		
+		
+		
+		//statistic
+				//5dit mel service w badalt esm
+				@GetMapping("/transactionWeek")
+			    public Map<String, Integer> TransactionWeek()
+			    {
+			        return transactionService.NbrTransactionWeek() ;
+			    }
+				
+				//SELECT
+				@GetMapping("/selecttransactionJPQL/{transactiontype}")
+				@ResponseBody
+				public List<Transaction> selectTransactionByTransactType(@Param("transactiontype") TransactionType transactiontype)
+			    {
+			        return transactionService.retrieveTransactionByTransactType(transactiontype) ;
+			    }
 	
 
 }

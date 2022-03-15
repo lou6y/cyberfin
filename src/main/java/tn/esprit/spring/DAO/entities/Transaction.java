@@ -52,7 +52,7 @@ public class Transaction implements Serializable{
 
 	 
 	public Transaction(Long idTransaction, Date dateTransaction, int sumToTransfer, int totalSum,
-			TransactionType transactiontype, Set<Claim> claim) {
+			TransactionType transactiontype, Set<Claim> claim,Account accountransaction) {
 		super();
 		this.idTransaction = idTransaction;
 		this.dateTransaction = dateTransaction;
@@ -60,6 +60,7 @@ public class Transaction implements Serializable{
 		this.totalSum = totalSum;
 		this.transactiontype = transactiontype;
 		this.claim = claim;
+		this.accountransaction = accountransaction;
 	}
 	
 
@@ -121,6 +122,15 @@ public class Transaction implements Serializable{
 	public void setClaim(Set<Claim> claim) {
 		this.claim = claim;
 	}
+	
+	public Account getAccountransaction() {
+		return accountransaction;
+	}
+
+
+	public void setAccountransaction(Account accountransaction) {
+		this.accountransaction = accountransaction;
+	}
 
 
 	@JsonManagedReference
@@ -129,6 +139,9 @@ public class Transaction implements Serializable{
 	
 	@ManyToOne
 	Account accountransaction;
+
+	
+	
 	
 	
 }

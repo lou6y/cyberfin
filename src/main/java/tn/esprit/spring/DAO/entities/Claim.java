@@ -23,7 +23,7 @@ public class Claim implements Serializable{
 
 	@Id
 	@GeneratedValue (strategy = GenerationType.IDENTITY)
-	@Column(name="idClaim")
+	@Column(name="idClaim",columnDefinition = "BINARY(16)")
 	private Long idClaim;
 	
 	@Column(name="description")
