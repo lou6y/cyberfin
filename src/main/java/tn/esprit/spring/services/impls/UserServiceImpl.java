@@ -3,7 +3,9 @@ package tn.esprit.spring.services.impls;
 import java.io.UnsupportedEncodingException;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import javax.mail.MessagingException;
@@ -17,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import net.bytebuddy.utility.RandomString;
 import tn.esprit.spring.dao.entities.ERole;
+import tn.esprit.spring.dao.entities.Job;
 import tn.esprit.spring.dao.entities.Role;
 import tn.esprit.spring.dao.entities.User;
 import tn.esprit.spring.dao.repositories.RoleRepository;
@@ -84,7 +87,7 @@ public class UserServiceImpl implements IUserService, IRoleService{
 	}
 	
 	
-	
+	@Override
 	public String forgotPassword(String email) {
 
 		Optional<User> userOptional = Optional
@@ -103,6 +106,7 @@ public class UserServiceImpl implements IUserService, IRoleService{
 		return user.getToken();
 	}
 	
+	@Override
 	public String resetPassword(String token, String password) {
 
 		Optional<User> userOptional = Optional
@@ -144,6 +148,7 @@ public class UserServiceImpl implements IUserService, IRoleService{
 		return diff.toMinutes() >= EXPIRE_TOKEN_AFTER_MINUTES;
 	}
 	
+	@Override
 	public void sendEmail(String recipientEmail, String msg) throws MessagingException, UnsupportedEncodingException {
 	    MimeMessage message = mailSender.createMimeMessage();              
 	    MimeMessageHelper helper = new MimeMessageHelper(message);
@@ -163,4 +168,63 @@ public class UserServiceImpl implements IUserService, IRoleService{
 	     
 	    mailSender.send(message);
 	}
+	
+	@Override
+	public List<User> showAllUsers()
+	{
+		List<User> users= (List<User>) userRepository.findAll(); 
+		return users;
+	}
+	
+	@Override
+	public List<User> showUsersByJob(Job job) {
+		return userRepository.findUsersByJob(job);
+	}
+
+	@Override
+	public List<User> showUsersByRole(Set<Role> roles) {
+		return userRepository.findUsersByRole(roles);
+	}
+	
+	@Override
+	public String modifyName(String username, String name )
+	{
+		Optional<User> userOptional = userRepository.findByUsername(username);
+		if (!userOptional.isPresent()) {
+			return "Invalid username.";
+		}
+		else 
+		{
+			User user = userOptional.get();
+			user.setName(name);
+			return "Your name successfully updated.";
+		}
+		
+	}
+	
+	@Override
+	public String modifyEmail(String username, String Email )
+	{
+		Optional<User> userOptional = userRepository.findByUsername(username);
+		if (!userOptional.isPresent()) {
+			return "Invalid username.";
+		}
+		else 
+		{
+			User user = userOptional.get();
+			user.setEmail(Email);
+			return "Your email successfully updated.";
+		}
+		
+	}
+	
+	@Override 
+	public String deleteUser(Long id) 
+	{ 
+		userRepository.deleteById(id);
+		return "User has been successfully deleted !";
+	}
+	
+	
+	
 }

@@ -1,10 +1,15 @@
 package tn.esprit.spring.dao.repositories;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import tn.esprit.spring.dao.entities.Job;
+import tn.esprit.spring.dao.entities.Role;
 import tn.esprit.spring.dao.entities.User;
 
 
@@ -22,4 +27,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   User findByToken(String token);
   
+  @Query("SELECT u FROM User u WHERE u.job= ?1")
+	List<User> findUsersByJob(Job job);
+	
+	@Query("SELECT u FROM User u WHERE u.roles= ?1")
+	List<User> findUsersByRole(Set<Role> roles);
 }
