@@ -2,6 +2,7 @@ package tn.esprit.spring.controller;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,8 +19,9 @@ import tn.esprit.spring.service.AssociationService;
 
 
 @RestController
+@RequestMapping("/association")
 public class AssociationRestController {
-
+@Autowired
 	 AssociationService associationservice;
 	  
 		// http://localhost:8081/CyberFin/association/retrieve-all-association
@@ -46,9 +49,9 @@ public class AssociationRestController {
 				public Association ajoutAssociation(@RequestBody Association c)
 				
 				{
-					Association association=associationservice.addAssociation(c);
+					return associationservice.addAssociation(c);
 					
-				return association;
+				
 				}
 	  
 				
@@ -56,24 +59,40 @@ public class AssociationRestController {
 				// http://localhost:8081/CyberFin/association/remove-association/{association-id}
 				@DeleteMapping("/remove-association/{association-id}")
 				@ResponseBody
-				public void removeTransaction(@PathVariable("association-id") Long id) {
+				public void removeAssociation(@PathVariable("association-id") Long id) {
 					associationservice.deleteAssociation(id);
 				}
 				
-				//http://localhost:8083/CyberFin/association/modify-association
-					@PutMapping("/modify-association")
+				//http://localhost:8081/CyberFin/association/modify-association
+				@PutMapping("/modify-association")
+				@ResponseBody
+				public Association modifyAssociation(@RequestBody Association c) {
+				return associationservice.uploadAssociation(c);
+				}
+				
+			/*	// http://localhost:8081/CyberFin/association/remove-association/{association-p}/{association-nb}
+				@DeleteMapping("/remove-association/{association-p}/{association-nb}")
+				@ResponseBody
+				public void removeAssociationByPlacesAndMonths(@PathVariable("association-p") int p,@PathVariable("association-nb") int nb) {
+					associationservice.deleteSAssociationByPLandNM(p, nb);
+				}*/
+				
+				// http://localhost:8081/CyberFin/association/retrieve-associationP/{association-p}
+					@GetMapping("/retrieve-associationP/{association-p}")
 					@ResponseBody
-					public Association modifyTransaction(@RequestBody Association a) {
-					return associationservice.uploadAssociation(a);
+					public List<Association> afficheAssociationPlaces(@PathVariable("association-p") int p) {
+					return associationservice.retrieveAssociationByP(p);
 					}
 				
-				/*// http://localhost:8081/SpringMVC/client/retrieve-by-profession
-				@GetMapping("/retrieve-by-profession/{prof}")
+				
+				
+				// http://localhost:8081/CyberFin/association/retrieve-by-t
+				@GetMapping("/retrieve-by-t")
 				@ResponseBody
-				public List<Association> getClientByProf(@Param("prof")Profession profession) {
-					List<Association> listClient = associationservice.retriveByProf(profession);
-					return listClient;
-					}*/
+				public List<Association> getRemainingAssociation() {
+					List<Association> association = associationservice.retrieveAssociationByTime();
+					return association;
+					}
 		
 	
 	

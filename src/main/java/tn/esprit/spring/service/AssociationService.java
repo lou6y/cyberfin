@@ -13,5 +13,7 @@ public interface AssociationService {
 	void deleteAssociation(Long id);
 	Association uploadAssociation(Association c);
 	Association retrieveAssociationBYID(Long id);
-	
+    //void deleteSAssociationByPLandNM(int p,int nb);
+	List<Association> retrieveAssociationByP(int p);
+	List<Association> retrieveAssociationByTime();
 }

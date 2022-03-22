@@ -42,4 +42,30 @@ private AssociationRepository rep ;
 		return rep.findById(id).get();
 	}
 
+	@Override
+	public List<Association> retrieveAssociationByP(int p) {
+		// TODO Auto-generated method stub
+		return rep.retrieveAssociationByPlace(p);
+	}
+
+	@Override
+	public List<Association> retrieveAssociationByTime() {
+		// TODO Auto-generated method stub
+		return (List<Association>)rep.retrieveAssociationByT();
+	}
+
+	/*@Override
+	public void deleteSAssociationByPLandNM(int p, int nb) {
+		// TODO Auto-generated method stub
+		rep.deleteAssociationByPlacesAndMonths(p, nb);
+	}
+*/
+	
+
+/*	@Override
+	public void deleteSAssociationByPLandNM(long p, long nb) {
+		rep.deleteAssociationByPlacesAndMonths(p, nb);
+		
+	}*/
+
 }

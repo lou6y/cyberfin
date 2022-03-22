@@ -4,11 +4,12 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.springframework.data.annotation.Id;
+
 
 @Entity
 @Table( name= "Association")
@@ -17,92 +18,142 @@ public class Association implements Serializable {
 	@Id
 	
 	private long id_association;
-	private float SumToPay;
-	private float Sum;
-	private String Description;
+	@Temporal (TemporalType.DATE)
+	private Date creationDate;
+	private String description;
+	@Temporal (TemporalType.DATE)
+	private Date finishDate;
+	private int nbMonths;
+	@Temporal (TemporalType.DATE)
+	private Date paymentDate;
+	private int places;
 	
-	@Temporal (TemporalType.DATE)
+	private float sum;
+	private float sumToPay;
 	
-	private Date CreationDate;
-	private int Places;
-	private int NbMonths;
-	@Temporal (TemporalType.DATE)
-	private Date FinishDate;
-	@Temporal (TemporalType.DATE)
-	private Date PaymentDate;
+
+	
 	public long getId_association() {
 		return id_association;
 	}
+
+
 	public void setId_association(long id_association) {
 		this.id_association = id_association;
 	}
-	public float getSumToPay() {
-		return SumToPay;
-	}
-	public void setSumToPay(float sumToPay) {
-		SumToPay = sumToPay;
-	}
-	public float getSum() {
-		return Sum;
-	}
-	public void setSum(float sum) {
-		Sum = sum;
-	}
-	public String getDescription() {
-		return Description;
-	}
-	public void setDescription(String description) {
-		Description = description;
-	}
+
+
 	public Date getCreationDate() {
-		return CreationDate;
+		return creationDate;
 	}
+
+
 	public void setCreationDate(Date creationDate) {
-		CreationDate = creationDate;
+		this.creationDate = creationDate;
 	}
-	public int getPlaces() {
-		return Places;
+
+
+	public String getDescription() {
+		return description;
 	}
-	public void setPlaces(int places) {
-		Places = places;
+
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
-	public int getNbMonths() {
-		return NbMonths;
-	}
-	public void setNbMonths(int nbMonths) {
-		NbMonths = nbMonths;
-	}
+
+
 	public Date getFinishDate() {
-		return FinishDate;
+		return finishDate;
 	}
+
+
 	public void setFinishDate(Date finishDate) {
-		FinishDate = finishDate;
+		this.finishDate = finishDate;
 	}
+
+
+	public int getNbMonths() {
+		return nbMonths;
+	}
+
+
+	public void setNbMonths(int nbMonths) {
+		this.nbMonths = nbMonths;
+	}
+
+
 	public Date getPaymentDate() {
-		return PaymentDate;
+		return paymentDate;
 	}
+
+
 	public void setPaymentDate(Date paymentDate) {
-		PaymentDate = paymentDate;
+		this.paymentDate = paymentDate;
 	}
-	public Association(long id_association, float sumToPay, float sum, String description, Date creationDate,
-			int places, int nbMonths, Date finishDate, Date paymentDate) {
+
+
+	public int getPlaces() {
+		return places;
+	}
+
+
+	public void setPlaces(int places) {
+		this.places = places;
+	}
+
+
+	public float getSum() {
+		return sum;
+	}
+
+
+	public void setSum(float sum) {
+		this.sum = sum;
+	}
+
+
+	public float getSumToPay() {
+		return sumToPay;
+	}
+
+
+	public void setSumToPay(float sumToPay) {
+		this.sumToPay = sumToPay;
+	}
+
+
+	public Association ()
+	{
+		super();
+	}
+	
+	
+	
+	public Association(long id_association, Date creationDate, String description, Date finishDate, int nbMonths,
+			Date paymentDate, int places, float sum, float sumToPay) {
 		super();
 		this.id_association = id_association;
-		SumToPay = sumToPay;
-		Sum = sum;
-		Description = description;
-		CreationDate = creationDate;
-		Places = places;
-		NbMonths = nbMonths;
-		FinishDate = finishDate;
-		PaymentDate = paymentDate;
+		this.creationDate = creationDate;
+		this.description = description;
+		this.finishDate = finishDate;
+		this.nbMonths = nbMonths;
+		this.paymentDate = paymentDate;
+		this.places = places;
+		this.sum = sum;
+		this.sumToPay = sumToPay;
 	}
+
+
 	@Override
 	public String toString() {
-		return "Association [id_association=" + id_association + ", SumToPay=" + SumToPay + ", Sum=" + Sum
-				+ ", Description=" + Description + ", CreationDate=" + CreationDate + ", Places=" + Places
-				+ ", NbMonths=" + NbMonths + ", FinishDate=" + FinishDate + ", PaymentDate=" + PaymentDate + "]";
+		return "Association [id_association=" + id_association + ", creationDate=" + creationDate + ", description="
+				+ description + ", finishDate=" + finishDate + ", nbMonths=" + nbMonths + ", paymentDate=" + paymentDate
+				+ ", places=" + places + ", sum=" + sum + ", sumToPay=" + sumToPay + "]";
 	}
+
+
+	
 	
 	
 
