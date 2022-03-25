@@ -92,8 +92,8 @@ public class TransactionServiceImpl implements TransactionService{
 	
 	//DELETE
 	@Override
-	public int deleteTransactionByTransactType(TransactionType transactiontype) {
-		return TransactionRep.deleteTransactionByTransactionType(transactiontype);
+	public void deleteTransactionByTransactType(TransactionType transactiontype) {
+		 TransactionRep.deleteTransactionByTransactionType(transactiontype);
 	}
 	
 	//INSERT

@@ -25,7 +25,7 @@ public interface TransactionService {
 	
 	List<Transaction> retrieveTransactionByTransactType(TransactionType transactiontype);
 	//int updateTransactionByTransactType(TransactionType transactiontype);
-	int deleteTransactionByTransactType(TransactionType transactiontype);
+	void deleteTransactionByTransactType(TransactionType transactiontype);
 	
 	void insertTransact(Date dateTransaction, int sumToTransfer,int totalSum, TransactionType transactiontype);
 
