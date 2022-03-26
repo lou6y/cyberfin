@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 
+
 @Transactional
 @Repository
 public interface TransactionRepository extends CrudRepository<Transaction, Long> {
@@ -41,6 +42,24 @@ public interface TransactionRepository extends CrudRepository<Transaction, Long>
 	
 	
 	
+	//SERVICES:
+	
+//lel deposit w withdrawel
+		//wHere acc.id_account (nafs l esm fel database)
+		@Modifying
+		    @Query(value ="UPDATE Account acc SET acc.balance = :new_balance WHERE acc.id_account = :id_account" , nativeQuery = true)
+		    @Transactional
+		    void changeAccountBalanceById(@Param("new_balance") double new_balance, @Param("id_account") Long id_account);
+		
+		
+//lel deposit
+			@Query(value = "SELECT balance FROM Account WHERE id_account = :id_account", nativeQuery = true)
+			double getAccountBalance(@Param("id_account") Long id_account);
+		
+	
+		
+		
+		
 	
 	//stat
 	@Query("SELECT t From Transaction t Where t.dateTransaction BETWEEN :date1 AND :date2 ORDER BY t.dateTransaction ASC")

@@ -14,7 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 public interface AccountRepository extends CrudRepository<Account, Long>{
 	
 	
-	//wgere acc.id_account (nafs l esm fel database)
+	//ba3d njarreb nhezhom l TRANSACTIONREPOSITORY
+	//wHere acc.id_account (nafs l esm fel database)
 	@Modifying
 	    @Query(value ="UPDATE Account acc SET acc.balance = :new_balance WHERE acc.id_account = :id_account" , nativeQuery = true)
 	    @Transactional

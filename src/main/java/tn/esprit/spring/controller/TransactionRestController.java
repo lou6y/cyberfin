@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
@@ -20,15 +19,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import io.swagger.annotations.ApiOperation;
 import tn.esprit.spring.DAO.entities.Transaction;
-import tn.esprit.spring.DAO.entities.Account;
 import tn.esprit.spring.DAO.entities.TransactionType;
 import tn.esprit.spring.services.Interfaces.TransactionService;
-
-import tn.esprit.spring.DAO.repositories.AccountRepository;
+import tn.esprit.spring.DAO.repositories.TransactionRepository;
 
 @RestController
 @RequestMapping("/transaction")
@@ -40,8 +36,12 @@ public class TransactionRestController {
 	TransactionService transactionService;
 	
 	@Autowired 
-	AccountRepository accountRepository;
+	TransactionRepository transactionRepository;
 
+	
+	double currentBalance1;
+    double newBalance1;
+	
 	// http://localhost:8083/SpringMVC/transaction/retrieve-all-transactions
 	@ApiOperation(value = "afficher transactions")
 	@GetMapping("/retrieve-all-transactions")
@@ -130,15 +130,36 @@ public class TransactionRestController {
 				
 				
 				
-				@PostMapping("/withdraw/{account_id1}/{account_id2}")
-				public String withdraw(@RequestParam("withdrawal_amount")String withdrawalAmount, @PathVariable("account_id1")Long accountID1, @PathVariable ("account_id2") Long accountID2, RedirectAttributes redirectAttributes) {
-					String errorMessage;
+				
+				///YSOB FLOUS
+				@PostMapping("/deposit/{account_id}")
+				public String deposit (@RequestParam("deposit_amount")double depositAmount, @PathVariable("account_id")Long accountID) {
+				
+				//get current balance
+					currentBalance1 = transactionRepository.getAccountBalance(accountID);
+				//CHECK FOR 0 VALUES
+					if(depositAmount == 0) {
+						return "withdrawal amount cannot be 0, please enter a value greater than 0";	
+					}
 					
-					double currentBalance1 = accountRepository.getAccountBalance(accountID1);
-					double currentBalance2 = accountRepository.getAccountBalance(accountID2);
+					//SET NEW BALANCE
+					 newBalance1 = currentBalance1 + depositAmount;
 					
-					 Account account1 = new Account(accountID1) ;
-					 Account account2 = new Account(accountID2) ;
+					//UPDATE ACCOUNT BALANCE:
+					transactionRepository.changeAccountBalanceById(newBalance1, accountID);
+					
+					return "deposit successful";
+				}
+				
+				
+				
+				//YEJBED FLOUS
+				@PostMapping("/withdraw/{account_id1}")
+				public String withdraw(@RequestParam("withdrawal_amount")String withdrawalAmount, @PathVariable("account_id1")Long accountID1) {
+					
+					//get currentbalance
+					currentBalance1 = transactionRepository.getAccountBalance(accountID1);
+//					 Account account1 = new Account(accountID1) ;
 					
 					//CONVERT VARIABLES
 					double withdrawal_amount= Double.parseDouble(withdrawalAmount);
@@ -147,8 +168,6 @@ public class TransactionRestController {
 					//CHECK FOR 0 VALUES
 					if(withdrawal_amount== 0) {
 						return "withdrawal amount cannot be 0, please enter a value greater than 0";	
-						//redirectAttributes.addFlashAttribute("error", errorMessage);
-						//return "redirect:/app/dashboard";
 					}
 					
 					//CHECK IF TRANSFER AMOUNT IS MORE THAN CURRENT BALANCE:
@@ -162,13 +181,10 @@ public class TransactionRestController {
 					
 					else {
 						//SET NEW BALANCE
-						
-						double newBalance1 = currentBalance1 - withdrawal_amount;
-						double newBalance2 = currentBalance2 + withdrawal_amount;
+						 newBalance1 = currentBalance1 - withdrawal_amount;
 						
 						//UPDATE ACCOUNT BALANCE:
-						accountRepository.changeAccountBalanceById(newBalance1, accountID1);
-						accountRepository.changeAccountBalanceById(newBalance2, accountID2);
+						transactionRepository.changeAccountBalanceById(newBalance1, accountID1);
 						
 					
 					

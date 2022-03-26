@@ -28,12 +28,6 @@ public class Account implements Serializable {
 		this.user = user;
 	}
 	
-	//zedtha ena wel balance raditou double
-	public Account(Long idAccount) {
-		super();
-		this.idAccount = idAccount;
-	}
-	
 	public Account() {
 		super();
 		// TODO Auto-generated constructor stub
