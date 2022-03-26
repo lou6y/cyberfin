@@ -152,6 +152,70 @@ public class TransactionRestController {
 				}
 				
 				
+				//YAB3ATH FLOUS
+				@PostMapping("/transfer")
+			    public String transfer(@RequestParam("transfer_from") String transfer_from,
+			                           @RequestParam("transfer_to") String transfer_to,
+			                           @RequestParam("transfer_amount")String transfer_amount){
+			        // Init Error Message Value:
+			        String errorMessage;
+
+			        // TODO: CHECK FOR EMPTY FIELDS:
+			        //if(transfer_from.isEmpty() || transfer_to.isEmpty() || transfer_amount.isEmpty()){
+			        //     return "The account transferring from and to along with the amount cannot be empty!";
+			           
+			       // }
+
+			        // TODO: CONVERT VARIABLES:
+			        Long transferFromId = Long.parseLong(transfer_from);
+			        Long transferToId = Long.parseLong(transfer_to);
+			        double transferAmount = Double.parseDouble(transfer_amount);
+
+			        // TODO: CHECK IF TRANSFERRING INTO THE SAME ACCOUNT:
+			        if(transferFromId == transferToId){
+			            return "Cannot Transfer Into The same Account, Please select the appropriate account to perform transfer";
+			            
+			        }
+
+			        // TODO: CHECK FOR 0 (ZERO) VALUES:
+			        if(transferAmount == 0){
+			            return errorMessage = "Cannot Transfer an amount of 0 , please enter a value greater than 0";
+			            
+			        }
+
+			     
+			        // TODO: GET CURRENT BALANCE:
+			        double currentBalanceOfAccountTransferringFrom  = transactionRepository.getAccountBalance(transferFromId);
+
+			        // TODO: CHECK IF TRANSFER AMOUNT IS MORE THAN CURRENT BALANCE:
+			        if(currentBalanceOfAccountTransferringFrom < transferAmount){
+			         
+			            // Log Failed Transaction:
+			            //transactionRepository.logTransaction(transferFromId, "Transfer", transferAmount, "online", "failed", "Insufficient Funds", currentDateTime);
+			            //return "You Have insufficient Funds to perform this Transfer!";
+			        }
+
+			        double  currentBalanceOfAccountTransferringTo = transactionRepository.getAccountBalance(transferToId);
+
+			        // TODO: SET NEW BALANCE:
+			        double newBalanceOfAccountTransferringFrom = currentBalanceOfAccountTransferringFrom - transferAmount;
+
+			        double newBalanceOfAccountTransferringTo = currentBalanceOfAccountTransferringTo + transferAmount;
+
+			        // Changed The Balance Of the Account Transferring From:
+			        transactionRepository.changeAccountBalanceById( newBalanceOfAccountTransferringFrom, transferFromId);
+
+			        // Changed The Balance Of the Account Transferring To:
+			        transactionRepository.changeAccountBalanceById(newBalanceOfAccountTransferringTo, transferToId);
+
+			        // Log Successful Transaction:
+			        //transactionRepository.logTransaction(transferFromId, "Transfer", transferAmount, "online", "success", "Transfer Transaction Successful",currentDateTime);
+
+			        return "Amount Transferred Successfully!";
+			       
+			    }
+				
+				
 				
 				//YEJBED FLOUS
 				@PostMapping("/withdraw/{account_id1}")

@@ -52,11 +52,22 @@ public interface TransactionRepository extends CrudRepository<Transaction, Long>
 		    void changeAccountBalanceById(@Param("new_balance") double new_balance, @Param("id_account") Long id_account);
 		
 		
-//lel deposit
+//lel deposit w transfer
 			@Query(value = "SELECT balance FROM Account WHERE id_account = :id_account", nativeQuery = true)
 			double getAccountBalance(@Param("id_account") Long id_account);
 		
-	
+//lel transfer
+		/*	@Modifying
+		    @Transactional
+		    @Query(value = "INSERT INTO transaction_history(account_id, transaction_type, amount, source, status, reason_code, created_at)" +
+		            "VALUES(:account_id, :transact_type, :amount, :source, :status, :reason_code, :created_at)", nativeQuery = true)
+		    void logTransaction(@Param("account_id")int account_id,
+		                        @Param("transact_type")String transact_type,
+		                        @Param("amount")double amount,
+		                        @Param("source")String source,
+		                        @Param("status")String status,
+		                        @Param("reason_code")String reason_code,
+		                        @Param("created_at") LocalDateTime created_at); */
 		
 		
 		
