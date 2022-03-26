@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,16 +16,24 @@ import javax.persistence.OneToOne;
 public class Account implements Serializable {
 	@Id
 	@GeneratedValue (strategy = GenerationType.AUTO)
+	@Column(name="idAccount")
 	private Long idAccount;
-	private Long Balance;
+	private double Balance;
 	@OneToOne(mappedBy="account")
 	private User user;
-	public Account(Long idAccount, Long balance, User user) {
+	public Account(Long idAccount, double balance, User user) {
 		super();
 		this.idAccount = idAccount;
-		Balance = balance;
+		this.Balance = balance;
 		this.user = user;
 	}
+	
+	//zedtha ena wel balance raditou double
+	public Account(Long idAccount) {
+		super();
+		this.idAccount = idAccount;
+	}
+	
 	public Account() {
 		super();
 		// TODO Auto-generated constructor stub
@@ -35,10 +44,10 @@ public class Account implements Serializable {
 	public void setIdAccount(Long idAccount) {
 		this.idAccount = idAccount;
 	}
-	public Long getBalance() {
+	public double getBalance() {
 		return Balance;
 	}
-	public void setBalance(Long balance) {
+	public void setBalance(double balance) {
 		Balance = balance;
 	}
 	public User getUser() {

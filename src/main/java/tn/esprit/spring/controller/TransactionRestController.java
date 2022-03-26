@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -17,11 +19,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import io.swagger.annotations.ApiOperation;
 import tn.esprit.spring.DAO.entities.Transaction;
+import tn.esprit.spring.DAO.entities.Account;
 import tn.esprit.spring.DAO.entities.TransactionType;
 import tn.esprit.spring.services.Interfaces.TransactionService;
+
+import tn.esprit.spring.DAO.repositories.AccountRepository;
 
 @RestController
 @RequestMapping("/transaction")
@@ -31,6 +38,9 @@ public class TransactionRestController {
 //AUTOWIRED kol manji nesta3mel service
 	@Autowired
 	TransactionService transactionService;
+	
+	@Autowired 
+	AccountRepository accountRepository;
 
 	// http://localhost:8083/SpringMVC/transaction/retrieve-all-transactions
 	@ApiOperation(value = "afficher transactions")
@@ -118,7 +128,54 @@ public class TransactionRestController {
 			    }
 				
 				
-
+				
+				
+				@PostMapping("/withdraw/{account_id1}/{account_id2}")
+				public String withdraw(@RequestParam("withdrawal_amount")String withdrawalAmount, @PathVariable("account_id1")Long accountID1, @PathVariable ("account_id2") Long accountID2, RedirectAttributes redirectAttributes) {
+					String errorMessage;
+					
+					double currentBalance1 = accountRepository.getAccountBalance(accountID1);
+					double currentBalance2 = accountRepository.getAccountBalance(accountID2);
+					
+					 Account account1 = new Account(accountID1) ;
+					 Account account2 = new Account(accountID2) ;
+					
+					//CONVERT VARIABLES
+					double withdrawal_amount= Double.parseDouble(withdrawalAmount);
+					 // int account_id = Integer.parseInt(accountID);  hedhi w li fou9ha 7atithom string melawel bech najamt na3mel accountID.isEmpty();
+					
+					//CHECK FOR 0 VALUES
+					if(withdrawal_amount== 0) {
+						return "withdrawal amount cannot be 0, please enter a value greater than 0";	
+						//redirectAttributes.addFlashAttribute("error", errorMessage);
+						//return "redirect:/app/dashboard";
+					}
+					
+					//CHECK IF TRANSFER AMOUNT IS MORE THAN CURRENT BALANCE:
+			        if(currentBalance1 < withdrawal_amount){
+			            return "You Have insufficient Funds to perform this Withdrawal!";
+			            // Log Failed Transaction:
+			            //transactionRepository.logTransaction(account_id, "Withdrawal", withdrawal_amount, "online", "failed", "Insufficient Funds", currentDateTime);
+			            //redirectAttributes.addFlashAttribute("error", errorMessage);
+			            //return "failed transaction";
+			        }
+					
+					else {
+						//SET NEW BALANCE
+						
+						double newBalance1 = currentBalance1 - withdrawal_amount;
+						double newBalance2 = currentBalance2 + withdrawal_amount;
+						
+						//UPDATE ACCOUNT BALANCE:
+						accountRepository.changeAccountBalanceById(newBalance1, accountID1);
+						accountRepository.changeAccountBalanceById(newBalance2, accountID2);
+						
+					
+					
+					}
+					return "withdrawal successful";
+				
+				}
 
 }
 
