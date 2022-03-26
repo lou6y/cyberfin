@@ -4,11 +4,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +24,7 @@ import tn.esprit.spring.DAO.entities.Transaction;
 import tn.esprit.spring.DAO.entities.TransactionType;
 import tn.esprit.spring.services.Interfaces.TransactionService;
 import tn.esprit.spring.DAO.repositories.TransactionRepository;
+import tn.esprit.spring.DAO.repositories.PaymentRepository;
 
 @RestController
 @RequestMapping("/transaction")
@@ -37,10 +37,14 @@ public class TransactionRestController {
 	
 	@Autowired 
 	TransactionRepository transactionRepository;
+	
+	@Autowired 
+	PaymentRepository paymentRepository;
 
 	
 	double currentBalance1;
     double newBalance1;
+    LocalDateTime currentDateTime = LocalDateTime.now();
 	
 	// http://localhost:8083/SpringMVC/transaction/retrieve-all-transactions
 	@ApiOperation(value = "afficher transactions")
@@ -95,7 +99,7 @@ public class TransactionRestController {
 		
 		
 
-		//INSERT   ERR
+		//INSERT  
 				@PostMapping("/inserttransactionJPQL/{dateT}/{sumToT}/{totalSum}/{transactiontype}")
 				@ResponseBody
 				public void insertTransactionByTransactType(@PathVariable @DateTimeFormat Date dateTransaction, @PathVariable int sumToTransfer,@PathVariable int totalSum, @PathVariable TransactionType transactiontype)
@@ -249,13 +253,65 @@ public class TransactionRestController {
 						
 						//UPDATE ACCOUNT BALANCE:
 						transactionRepository.changeAccountBalanceById(newBalance1, accountID1);
-						
-					
 					
 					}
 					return "withdrawal successful";
 				
 				}
+				
+				
+				
+				//PAYMENT
+				@PostMapping("/payment")
+			    public String payment(@RequestParam("beneficiary")String beneficiary,
+			                          @RequestParam("account_number")String account_number,
+			                          @RequestParam("account_id")String account_id,
+			                          @RequestParam("reference")String reference,
+			                          @RequestParam("payment_amount")String payment_amount){
+
+			        String errorMessage;
+			        String successMessage;
+
+			        // TODO: CONVERT VARIABLES:
+			        Long accountID = Long.parseLong(account_id);
+			        double paymentAmount = Double.parseDouble(payment_amount);
+
+			        // TODO: CHECK FOR 0 (ZERO) VALUES:
+			        if(paymentAmount == 0){
+			            return "Payment Amount Cannot be of 0 value, please enter a value greater than 0 ";
+			        }
+
+			        // TODO: GET CURRENT BALANCE:
+			        currentBalance1 = transactionRepository.getAccountBalance(accountID);
+
+			        // TODO: CHECK IF PAYMENT AMOUNT IS MORE THAN CURRENT BALANCE:
+			        if(currentBalance1 < paymentAmount){
+			            errorMessage = "You Have insufficient Funds to perform this payment";
+			            String reasonCode = "Could not Processed Payment due to insufficient funds!";
+			            paymentRepository.makePayment(accountID, beneficiary, account_number, paymentAmount, reference, "failed", reasonCode, currentDateTime);
+			            // Log Failed Transaction:
+			          //  transactionRepository.logTransaction(accountID, "Payment", paymentAmount, "online", "failed", "Insufficient Funds", currentDateTime);
+			            
+			            return "You Have insufficient Funds to perform this payment";
+			        }
+
+			        // TODO SET NEW BALANCE FOR ACCOUNT PAYING FROM:
+			        newBalance1 = currentBalance1 - paymentAmount;
+
+			     // TODO: MAKE PAYMENT:
+			        String reasonCode = "Payment Processed Successfully!";
+			        paymentRepository.makePayment(accountID, beneficiary, account_number, paymentAmount, reference, "success", reasonCode, currentDateTime);
+			        // TODO: UPDATE ACCOUNT PAYING FROM:
+			        transactionRepository.changeAccountBalanceById(newBalance1, accountID);
+
+			        // Log Successful Transaction:
+			        //transactionRepository.logTransaction(accountID, "Payment", paymentAmount, "online", "success", "Payment Transaction Successful",currentDateTime);
+
+			        successMessage = reasonCode;
+			      
+			        return "Payment Processed Successfully!";
+			    }
+				
 
 }
 

@@ -35,6 +35,7 @@ public interface TransactionRepository extends CrudRepository<Transaction, Long>
 	
 	//insert
 	@Modifying
+	@Transactional
 	@Query(value = "INSERT INTO Transaction (dateTransaction,sumToTransfer, totalSum,transactiontype) VALUES (:dateT, :sumToT, :totalSum, :transactiontype)", nativeQuery = true)
 	void insertTransaction(@Param("dateT") Date dateTransaction, @Param("sumToT") int sumToTransfer,
 			@Param("totalSum") int totalSum, @Param("transactiontype") TransactionType transactiontype);
