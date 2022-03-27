@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import io.swagger.annotations.ApiOperation;
 import tn.esprit.spring.DAO.entities.Transaction;
-import tn.esprit.spring.DAO.entities.TransactionType;
 import tn.esprit.spring.services.Interfaces.TransactionService;
 import tn.esprit.spring.DAO.repositories.TransactionRepository;
 import tn.esprit.spring.DAO.repositories.PaymentRepository;
@@ -56,10 +55,10 @@ public class TransactionRestController {
 		}
 	
 	// http://localhost:8083/SpringMVC/transaction/retrieve-transaction/1
-		@GetMapping("/retrieve-transaction/{transaction-id}")
+		@GetMapping("/retrieve-transaction/{transaction_id}")
 		@ResponseBody
-		public Transaction retrieveTransaction(@PathVariable("transaction-id") Long transactionId) {
-		return transactionService.retrieveTransaction(transactionId);
+		public Transaction retrieveTransaction(@PathVariable("transaction_id") Long transaction_id) {
+		return transactionService.retrieveTransaction(transaction_id);
 		}
 
 		// http://localhost:8083/SpringMVC/transaction/add-transaction
@@ -82,30 +81,35 @@ public class TransactionRestController {
 		
 		
 		// http://localhost:8083/SpringMVC/transaction/remove-transaction/{transaction-id}
-		@DeleteMapping("/remove-transaction/{transaction-id}")
+		@DeleteMapping("/remove-transaction/{transaction_id}")
 		@ResponseBody
-		public void removeTransaction(@PathVariable("transaction-id") Long transactionId) {
-		transactionService.deleteTransaction(transactionId);
+		public void removeTransaction(@PathVariable("transaction_id") Long transaction_id) {
+		transactionService.deleteTransaction(transaction_id);
 		}
 		
 		
 		//SELECT  TEKHDEM
-		@GetMapping("/selecttransactionJPQL/{transactiontype}")
+		@GetMapping("/selecttransactionJPQL/{transaction_type}")
 		@ResponseBody
-		public List<Transaction> selectTransactionByTransactType(@PathVariable TransactionType transactiontype)
+		public List<Transaction> selectTransactionByTransactType(@PathVariable String transaction_type)
 	    {
-	        return transactionService.retrieveTransactionByTransactType(transactiontype) ;
+	        return transactionService.retrieveTransactionByTransactType(transaction_type) ;
 	    }
 		
 		
 
-		//INSERT  
-				@PostMapping("/inserttransactionJPQL/{dateT}/{sumToT}/{totalSum}/{transactiontype}")
-				@ResponseBody
-				public void insertTransactionByTransactType(@PathVariable @DateTimeFormat Date dateTransaction, @PathVariable int sumToTransfer,@PathVariable int totalSum, @PathVariable TransactionType transactiontype)
-			    {
-			         transactionService.insertTransact(dateTransaction,sumToTransfer,totalSum, transactiontype) ;
-			    }
+		//INSERT
+				@PostMapping
+				 @ResponseBody
+				 void makeTransact(@RequestParam("account_id")Long account_id,
+						 			@RequestParam("transact_type")String transact_type,
+						 			@RequestParam("amount")double amount,
+						 			@RequestParam("source")String source ) {
+					 
+					 String reasonCode = "test transact!";
+				        transactionService.makeTransact(account_id, transact_type, amount, source, "success", reasonCode, currentDateTime);
+
+				 } 
 				
 				
 		//DELETE  //modify zeda @transactional
@@ -113,7 +117,7 @@ public class TransactionRestController {
 		//@Transactional
 				@DeleteMapping("/deletetransactionJPQL/{transactiontype}")
 				@ResponseBody
-				public void delTransactionByTransactType(@PathVariable TransactionType transactiontype)
+				public void delTransactionByTransactType(@PathVariable String transactiontype)
 			    {
 			        transactionService.deleteTransactionByTransactType(transactiontype) ;
 			    }
@@ -273,6 +277,7 @@ public class TransactionRestController {
 			        String successMessage;
 
 			        // TODO: CONVERT VARIABLES:
+			        //3MALTHOM STRING MELAWEL KHATER BA3D BECH NEST7A9HOM FEL CONTROL DE SAISIE FEL FRONT
 			        Long accountID = Long.parseLong(account_id);
 			        double paymentAmount = Double.parseDouble(payment_amount);
 
@@ -284,7 +289,7 @@ public class TransactionRestController {
 			        // TODO: GET CURRENT BALANCE:
 			        currentBalance1 = transactionRepository.getAccountBalance(accountID);
 
-			        // TODO: CHECK IF PAYMENT AMOUNT IS MORE THAN CURRENT BALANCE:
+			        // TODO: CHECK IF PAYMENT AMOUNT IS MORE THAN CURRENT BALANCE:  CONTROLE DE SAISIE
 			        if(currentBalance1 < paymentAmount){
 			            errorMessage = "You Have insufficient Funds to perform this payment";
 			            String reasonCode = "Could not Processed Payment due to insufficient funds!";

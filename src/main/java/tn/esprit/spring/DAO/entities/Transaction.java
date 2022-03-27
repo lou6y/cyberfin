@@ -1,133 +1,98 @@
 package tn.esprit.spring.DAO.entities;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-
+//L HISTORIQUE TRANSACTION
 @Entity
 @Table( name = "Transaction")
 public class Transaction implements Serializable{
 	
 	@Id
 	@GeneratedValue (strategy = GenerationType.IDENTITY)
-	@Column(name="idTransaction")
-	private Long idTransaction;
+    private Long transaction_id;
 	
-	@Column(name="dateTransaction")
-	@Temporal (TemporalType.DATE)
-	private Date dateTransaction;
-	
-	@Column(name="sumToTransfer")
-	private int sumToTransfer;
-	
-	@Column(name="totalSum")
-	private int totalSum;
-	
-	@Enumerated(EnumType.STRING)
-	private TransactionType transactiontype;
+    private Long account_id;
+    private String transaction_type;
+    private double amount;
+    private String source;
+    private String status;
+    private String reason_code;
+    private LocalDateTime created_at;
 
-	public Transaction() {
-		super();
-		
-	}
+    public Long getTransaction_id() {
+        return transaction_id;
+    }
 
-	 
-	public Transaction(Long idTransaction, Date dateTransaction, int sumToTransfer, int totalSum,
-			TransactionType transactiontype, Set<Claim> claim,Account accountransaction) {
-		super();
-		this.idTransaction = idTransaction;
-		this.dateTransaction = dateTransaction;
-		this.sumToTransfer = sumToTransfer;
-		this.totalSum = totalSum;
-		this.transactiontype = transactiontype;
-		this.claim = claim;
-		this.accountransaction = accountransaction;
-	}
-	
+    public void setTransaction_id(Long transaction_id) {
+        this.transaction_id = transaction_id;
+    }
 
-	public Long getIdTransaction() {
-		return idTransaction;
-	}
+    public Long getAccount_id() {
+        return account_id;
+    }
 
+    public void setAccount_id(Long account_id) {
+        this.account_id = account_id;
+    }
 
-	public void setIdTransaction(Long idTransaction) {
-		this.idTransaction = idTransaction;
-	}
+    public String getTransaction_type() {
+        return transaction_type;
+    }
 
+    public void setTransaction_type(String transaction_type) {
+        this.transaction_type = transaction_type;
+    }
 
-	public Date getDateTransaction() {
-		return dateTransaction;
-	}
+    public double getAmount() {
+        return amount;
+    }
 
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
 
-	public void setDateTransaction(Date dateTransaction) {
-		this.dateTransaction = dateTransaction;
-	}
+    public String getSource() {
+        return source;
+    }
 
+    public void setSource(String source) {
+        this.source = source;
+    }
 
-	public int getSumToTransfer() {
-		return sumToTransfer;
-	}
+    public String getStatus() {
+        return status;
+    }
 
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public void setSumToTransfer(int sumToTransfer) {
-		this.sumToTransfer = sumToTransfer;
-	}
+    public String getReason_code() {
+        return reason_code;
+    }
 
+    public void setReason_code(String reason_code) {
+        this.reason_code = reason_code;
+    }
 
-	public int getTotalSum() {
-		return totalSum;
-	}
+    public LocalDateTime getCreated_at() {
+        return created_at;
+    }
 
-
-	public void setTotalSum(int totalSum) {
-		this.totalSum = totalSum;
-	}
-
-
-	public TransactionType getTransactiontype() {
-		return transactiontype;
-	}
-
-
-	public void setTransactiontype(TransactionType transactiontype) {
-		this.transactiontype = transactiontype;
-	}
-
-
-	public Set<Claim> getClaim() {
-		return claim;
-	}
-
-
-	public void setClaim(Set<Claim> claim) {
-		this.claim = claim;
-	}
-	
-	public Account getAccountransaction() {
-		return accountransaction;
-	}
-
-
-	public void setAccountransaction(Account accountransaction) {
-		this.accountransaction = accountransaction;
-	}
+    public void setCreated_at(LocalDateTime created_at) {
+        this.created_at = created_at;
+    }
 
 
 	@JsonManagedReference

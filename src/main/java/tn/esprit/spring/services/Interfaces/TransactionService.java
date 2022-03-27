@@ -1,32 +1,30 @@
 package tn.esprit.spring.services.Interfaces;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.data.repository.query.Param;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import tn.esprit.spring.DAO.entities.Transaction;
-import tn.esprit.spring.DAO.entities.TransactionType;
 
 
 public interface TransactionService {
 	
 	List<Transaction> retrieveAllTransactions();
-
-	Transaction addTransaction(Transaction t);
-
-	void deleteTransaction(Long id);
-
-	Transaction updateTransaction(Transaction t);
 	Transaction retrieveTransaction(Long id);
+	Transaction addTransaction(Transaction t);
+	void deleteTransaction(Long id);
+	Transaction updateTransaction(Transaction t);
 	
 	public Map<String, Integer> NbrTransactionWeek();
 	
-	List<Transaction> retrieveTransactionByTransactType(TransactionType transactiontype);
+	List<Transaction> retrieveTransactionByTransactType(String transaction_type);
 	//int updateTransactionByTransactType(TransactionType transactiontype);
-	void deleteTransactionByTransactType(TransactionType transactiontype);
-	
-	void insertTransact(Date dateTransaction, int sumToTransfer,int totalSum, TransactionType transactiontype);
+	void deleteTransactionByTransactType(String transaction_type);
+//insert
+	void makeTransact( Long account_id,String transaction_type, double amount,String source,String status, String reason_code,LocalDateTime created_at);
 
 }

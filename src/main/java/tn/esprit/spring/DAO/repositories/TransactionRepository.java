@@ -7,9 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.Modifying;
 import tn.esprit.spring.DAO.entities.Transaction;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
-import tn.esprit.spring.DAO.entities.TransactionType;
 import org.springframework.transaction.annotation.Transactional;
 
 
@@ -20,8 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 public interface TransactionRepository extends CrudRepository<Transaction, Long> {
 	
 	//select
-	@Query("SELECT t FROM Transaction t WHERE t.transactiontype= :transactiontype")
-	List<Transaction> retrieveTransactionByTransactionType(@Param("transactiontype") TransactionType transactiontype);
+	@Query("SELECT t FROM Transaction t WHERE t.transaction_type= :transaction_type")
+	List<Transaction> retrieveTransactionByTransactionType(@Param("transaction_type") String transaction_type);
 	
 	//update
 //	@Modifying
@@ -30,16 +30,21 @@ public interface TransactionRepository extends CrudRepository<Transaction, Long>
 
 	//delete
 	@Modifying
-	@Query("DELETE FROM Transaction t WHERE t.transactiontype = :transactiontype")
-	int deleteTransactionByTransactionType(@Param("transactiontype") TransactionType transactiontype); 
+	@Query("DELETE FROM Transaction t WHERE t.transaction_type = :transaction_type")
+	int deleteTransactionByTransactionType(@Param("transaction_type") String transaction_type); 
 	
 	//insert
-	@Modifying
-	@Transactional
-	@Query(value = "INSERT INTO Transaction (dateTransaction,sumToTransfer, totalSum,transactiontype) VALUES (:dateT, :sumToT, :totalSum, :transactiontype)", nativeQuery = true)
-	void insertTransaction(@Param("dateT") Date dateTransaction, @Param("sumToT") int sumToTransfer,
-			@Param("totalSum") int totalSum, @Param("transactiontype") TransactionType transactiontype);
-	
+	 @Modifying
+	    @Transactional
+	    @Query(value = "INSERT INTO Transaction(account_id, transaction_type, amount, source, status, reason_code, created_at)" +
+	            "VALUES(:account_id, :transact_type, :amount, :source, :status, :reason_code, :created_at)", nativeQuery = true)
+	    void makeTransaction(@Param("account_id")Long account_id,
+	                        @Param("transact_type")String transact_type,
+	                        @Param("amount")double amount,
+	                        @Param("source")String source,
+	                        @Param("status")String status,
+	                        @Param("reason_code")String reason_code,
+	                        @Param("created_at") LocalDateTime created_at);
 	
 	
 	
@@ -74,6 +79,6 @@ public interface TransactionRepository extends CrudRepository<Transaction, Long>
 		
 	
 	//stat
-	@Query("SELECT t From Transaction t Where t.dateTransaction BETWEEN :date1 AND :date2 ORDER BY t.dateTransaction ASC")
+	@Query("SELECT t From Transaction t Where t.created_at BETWEEN :date1 AND :date2 ORDER BY t.created_at ASC")
 	List<Transaction> ListTransactionOfweekAgo(@Param("date1") Date date1,@Param("date2") Date date2);
 }

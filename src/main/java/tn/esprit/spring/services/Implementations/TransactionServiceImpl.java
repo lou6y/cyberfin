@@ -10,11 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import tn.esprit.spring.DAO.entities.Transaction;
-import tn.esprit.spring.DAO.entities.TransactionType;
 import tn.esprit.spring.DAO.repositories.TransactionRepository;
 import tn.esprit.spring.services.Interfaces.TransactionService;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -64,13 +64,13 @@ public class TransactionServiceImpl implements TransactionService{
 	        System.out.println(formater.format(date)+"********"+formater.format(date1));
 	        List<Transaction> listTransaction =  TransactionRep.ListTransactionOfweekAgo(date1,date);
 	        for(Transaction t : listTransaction) {
-	            System.out.println(t.getDateTransaction());
-	            if(!mapTransactweek.containsKey(formater.format(t.getDateTransaction()))) {
-	            	mapTransactweek.put(formater.format(t.getDateTransaction()), 0);
+	            System.out.println(t.getCreated_at());
+	            if(!mapTransactweek.containsKey(formater.format(t.getCreated_at()))) {
+	            	mapTransactweek.put(formater.format(t.getCreated_at()), 0);
 
 	            }
-	            if(mapTransactweek.containsKey(formater.format(t.getDateTransaction()))) {
-	            	mapTransactweek.put(formater.format(t.getDateTransaction()),mapTransactweek.get(formater.format(t.getDateTransaction()))+1 );
+	            if(mapTransactweek.containsKey(formater.format(t.getCreated_at()))) {
+	            	mapTransactweek.put(formater.format(t.getCreated_at()),mapTransactweek.get(formater.format(t.getCreated_at()))+1 );
 	            }
 	        }
 	        return mapTransactweek;
@@ -78,8 +78,8 @@ public class TransactionServiceImpl implements TransactionService{
 
 	//SELECT
 	@Override
-	public List<Transaction> retrieveTransactionByTransactType(TransactionType transactiontype) {
-		return TransactionRep.retrieveTransactionByTransactionType(transactiontype);
+	public List<Transaction> retrieveTransactionByTransactType(String transaction_type) {
+		return TransactionRep.retrieveTransactionByTransactionType(transaction_type);
 	}
 	
 	
@@ -92,14 +92,14 @@ public class TransactionServiceImpl implements TransactionService{
 	
 	//DELETE
 	@Override
-	public void deleteTransactionByTransactType(TransactionType transactiontype) {
-		 TransactionRep.deleteTransactionByTransactionType(transactiontype);
+	public void deleteTransactionByTransactType(String transaction_type) {
+		 TransactionRep.deleteTransactionByTransactionType(transaction_type);
 	}
 	
 	//INSERT
-	public void insertTransact(Date dateTransaction, int sumToTransfer,int totalSum, TransactionType transactiontype) {
-		TransactionRep.insertTransaction(dateTransaction,sumToTransfer,totalSum, transactiontype);
-	}
+	public void makeTransact( Long account_id,String transaction_type, double amount,String source,String status, String reason_code,LocalDateTime created_at){		
+		TransactionRep.makeTransaction(account_id,transaction_type,amount, source, status, reason_code, created_at);
+	} 
 	
 		
 	
