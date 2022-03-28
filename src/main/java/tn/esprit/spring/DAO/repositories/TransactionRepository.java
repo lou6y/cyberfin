@@ -33,21 +33,9 @@ public interface TransactionRepository extends CrudRepository<Transaction, Long>
 	@Query("DELETE FROM Transaction t WHERE t.transaction_type = :transaction_type")
 	int deleteTransactionByTransactionType(@Param("transaction_type") String transaction_type); 
 	
-	//insert
-	 @Modifying
-	    @Transactional
-	    @Query(value = "INSERT INTO Transaction(account_id, transaction_type, amount, source, status, reason_code, created_at)" +
-	            "VALUES(:account_id, :transact_type, :amount, :source, :status, :reason_code, :created_at)", nativeQuery = true)
-	    void makeTransaction(@Param("account_id")Long account_id,
-	                        @Param("transact_type")String transact_type,
-	                        @Param("amount")double amount,
-	                        @Param("source")String source,
-	                        @Param("status")String status,
-	                        @Param("reason_code")String reason_code,
-	                        @Param("created_at") LocalDateTime created_at);
 	
 	
-	
+
 	//SERVICES:
 	
 //lel deposit w withdrawel
@@ -62,19 +50,19 @@ public interface TransactionRepository extends CrudRepository<Transaction, Long>
 			@Query(value = "SELECT balance FROM Account WHERE id_account = :id_account", nativeQuery = true)
 			double getAccountBalance(@Param("id_account") Long id_account);
 		
-//lel transfer
-		/*	@Modifying
-		    @Transactional
-		    @Query(value = "INSERT INTO transaction_history(account_id, transaction_type, amount, source, status, reason_code, created_at)" +
-		            "VALUES(:account_id, :transact_type, :amount, :source, :status, :reason_code, :created_at)", nativeQuery = true)
-		    void logTransaction(@Param("account_id")int account_id,
-		                        @Param("transact_type")String transact_type,
-		                        @Param("amount")double amount,
-		                        @Param("source")String source,
-		                        @Param("status")String status,
-		                        @Param("reason_code")String reason_code,
-		                        @Param("created_at") LocalDateTime created_at); */
-		
+
+			//insert (AUDIT TRAIL)
+			 @Modifying
+			    @Transactional
+			    @Query(value = "INSERT INTO Transaction(account_id, transaction_type, amount, source, status, reason_code, created_at)" +
+			            "VALUES(:account_id, :transact_type, :amount, :source, :status, :reason_code, :created_at)", nativeQuery = true)
+			    void historiqueTransaction(@Param("account_id")Long account_id,
+			                        @Param("transact_type")String transact_type,
+			                        @Param("amount")double amount,
+			                        @Param("source")String source,
+			                        @Param("status")String status,
+			                        @Param("reason_code")String reason_code,
+			                        @Param("created_at") LocalDateTime created_at);
 		
 		
 	

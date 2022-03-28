@@ -13,7 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-//L HISTORIQUE TRANSACTION
+//L HISTORIQUE TRANSACTION LKOL 
 @Entity
 @Table( name = "Transaction")
 public class Transaction implements Serializable{

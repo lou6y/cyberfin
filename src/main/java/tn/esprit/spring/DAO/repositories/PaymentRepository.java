@@ -17,7 +17,7 @@ public interface PaymentRepository extends CrudRepository<Payment, Integer> {
     @Query(value = " INSERT INTO Payment (account_id, beneficiary, beneficiary_acc_no, amount, reference_no, status, reason_code, created_at) " +
             "VALUES(:account_id,:beneficiary, :beneficiary_acc_no, :amount, :reference_no, :status, :reason_code, :created_at )", nativeQuery = true)
     @Transactional
-    void makePayment(@Param("account_id") Long account_id,
+    void makePayment(@Param("account_id") Long my_account_id,
                      @Param("beneficiary") String beneficiary,
                      @Param("beneficiary_acc_no") String beneficiary_acc_no,
                      @Param("amount") double amount,

@@ -97,8 +97,8 @@ public class TransactionServiceImpl implements TransactionService{
 	}
 	
 	//INSERT
-	public void makeTransact( Long account_id,String transaction_type, double amount,String source,String status, String reason_code,LocalDateTime created_at){		
-		TransactionRep.makeTransaction(account_id,transaction_type,amount, source, status, reason_code, created_at);
+	public void historiqueTransact( Long account_id,String transaction_type, double amount,String source,String status, String reason_code,LocalDateTime created_at){		
+		TransactionRep.historiqueTransaction(account_id,transaction_type,amount, source, status, reason_code, created_at);
 	} 
 	
 		

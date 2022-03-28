@@ -4,10 +4,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpSession;
+
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,13 +18,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
+
 import org.springframework.web.bind.annotation.RequestParam;
 
 import io.swagger.annotations.ApiOperation;
+import tn.esprit.spring.DAO.entities.PaymentHistory;
 import tn.esprit.spring.DAO.entities.Transaction;
+import tn.esprit.spring.DAO.entities.TransactionHistory;
+import tn.esprit.spring.DAO.entities.User;
 import tn.esprit.spring.services.Interfaces.TransactionService;
 import tn.esprit.spring.DAO.repositories.TransactionRepository;
+import tn.esprit.spring.DAO.repositories.PaymentHistoryRepository;
 import tn.esprit.spring.DAO.repositories.PaymentRepository;
+import tn.esprit.spring.DAO.repositories.TransactHistoryRepository;
 
 @RestController
 @RequestMapping("/transaction")
@@ -44,6 +52,17 @@ public class TransactionRestController {
 	double currentBalance1;
     double newBalance1;
     LocalDateTime currentDateTime = LocalDateTime.now();
+    
+    
+    @Autowired
+    private PaymentHistoryRepository paymentHistoryRepository;
+
+    @Autowired
+    private TransactHistoryRepository transactHistoryRepository;
+
+    User user;
+    
+    
 	
 	// http://localhost:8083/SpringMVC/transaction/retrieve-all-transactions
 	@ApiOperation(value = "afficher transactions")
@@ -97,19 +116,20 @@ public class TransactionRestController {
 	    }
 		
 		
-
-		//INSERT
+/*
+		//TEST INSERT (NON OBLI)
+		@ApiOperation(value = "add transaction")
 				@PostMapping
 				 @ResponseBody
-				 void makeTransact(@RequestParam("account_id")Long account_id,
+				 void historiqueTransact(@RequestParam("account_id")Long account_id,
 						 			@RequestParam("transact_type")String transact_type,
 						 			@RequestParam("amount")double amount,
 						 			@RequestParam("source")String source ) {
 					 
 					 String reasonCode = "test transact!";
-				        transactionService.makeTransact(account_id, transact_type, amount, source, "success", reasonCode, currentDateTime);
+				        transactionService.historiqueTransact(account_id, transact_type, amount, source, "success", reasonCode, currentDateTime);
 
-				 } 
+				 }  */
 				
 				
 		//DELETE  //modify zeda @transactional
@@ -155,6 +175,8 @@ public class TransactionRestController {
 					
 					//UPDATE ACCOUNT BALANCE:
 					transactionRepository.changeAccountBalanceById(newBalance1, accountID);
+			        transactionService.historiqueTransact(accountID, "deposit", depositAmount, "online", "success", "Deposit Transaction Successful",currentDateTime);
+
 					
 					return "deposit successful";
 				}
@@ -168,7 +190,7 @@ public class TransactionRestController {
 			        // Init Error Message Value:
 			        String errorMessage;
 
-			        // TODO: CHECK FOR EMPTY FIELDS:
+			        // TODO: CHECK FOR EMPTY FIELDS: felfront
 			        //if(transfer_from.isEmpty() || transfer_to.isEmpty() || transfer_amount.isEmpty()){
 			        //     return "The account transferring from and to along with the amount cannot be empty!";
 			           
@@ -198,9 +220,9 @@ public class TransactionRestController {
 			        // TODO: CHECK IF TRANSFER AMOUNT IS MORE THAN CURRENT BALANCE:
 			        if(currentBalanceOfAccountTransferringFrom < transferAmount){
 			         
-			            // Log Failed Transaction:
-			            //transactionRepository.logTransaction(transferFromId, "Transfer", transferAmount, "online", "failed", "Insufficient Funds", currentDateTime);
-			            //return "You Have insufficient Funds to perform this Transfer!";
+			            //historique Failed Transaction:
+			            transactionService.historiqueTransact(transferFromId, "Transfer", transferAmount, "online", "failed", "Insufficient Fund", currentDateTime);
+			            return "You Have insufficient Funds to perform this Transfer!";
 			        }
 
 			        double  currentBalanceOfAccountTransferringTo = transactionRepository.getAccountBalance(transferToId);
@@ -216,8 +238,8 @@ public class TransactionRestController {
 			        // Changed The Balance Of the Account Transferring To:
 			        transactionRepository.changeAccountBalanceById(newBalanceOfAccountTransferringTo, transferToId);
 
-			        // Log Successful Transaction:
-			        //transactionRepository.logTransaction(transferFromId, "Transfer", transferAmount, "online", "success", "Transfer Transaction Successful",currentDateTime);
+			        // if Successful Transaction: n3amer f tabel transaction
+			        transactionService.historiqueTransact(transferFromId, "Transfer", transferAmount, "online", "success", "Transfer Transaction Successful",currentDateTime);
 
 			        return "Amount Transferred Successfully!";
 			       
@@ -239,16 +261,16 @@ public class TransactionRestController {
 					
 					//CHECK FOR 0 VALUES
 					if(withdrawal_amount== 0) {
-						return "withdrawal amount cannot be 0, please enter a value greater than 0";	
+						return "Withdrawal Amount Cannot be of 0 (Zero) value, please enter a value greater than 0 (Zero)";
+			          
 					}
 					
 					//CHECK IF TRANSFER AMOUNT IS MORE THAN CURRENT BALANCE:
 			        if(currentBalance1 < withdrawal_amount){
-			            return "You Have insufficient Funds to perform this Withdrawal!";
+			        	String errorMessage = "You Have insufficient Funds to perform this Withdrawal!";
 			            // Log Failed Transaction:
-			            //transactionRepository.logTransaction(account_id, "Withdrawal", withdrawal_amount, "online", "failed", "Insufficient Funds", currentDateTime);
-			            //redirectAttributes.addFlashAttribute("error", errorMessage);
-			            //return "failed transaction";
+			            transactionService.historiqueTransact(accountID1, "Withdrawal", withdrawal_amount, "online", "failed", "Insufficient Funds", currentDateTime);
+			            return "You Have insufficient Funds to perform this Withdrawal!";
 			        }
 					
 					else {
@@ -257,6 +279,8 @@ public class TransactionRestController {
 						
 						//UPDATE ACCOUNT BALANCE:
 						transactionRepository.changeAccountBalanceById(newBalance1, accountID1);
+				        transactionService.historiqueTransact(accountID1, "Withdrawal", withdrawal_amount, "online", "success", "Withdrawal Transaction Successful",currentDateTime);
+
 					
 					}
 					return "withdrawal successful";
@@ -265,7 +289,7 @@ public class TransactionRestController {
 				
 				
 				
-				//PAYMENT
+				//PAYMENT // EL ACCOUNT_ID HOUWA COMPTE TE3I LI BECH ENA7I MENNOU FLOUS
 				@PostMapping("/payment")
 			    public String payment(@RequestParam("beneficiary")String beneficiary,
 			                          @RequestParam("account_number")String account_number,
@@ -294,8 +318,9 @@ public class TransactionRestController {
 			            errorMessage = "You Have insufficient Funds to perform this payment";
 			            String reasonCode = "Could not Processed Payment due to insufficient funds!";
 			            paymentRepository.makePayment(accountID, beneficiary, account_number, paymentAmount, reference, "failed", reasonCode, currentDateTime);
-			            // Log Failed Transaction:
-			          //  transactionRepository.logTransaction(accountID, "Payment", paymentAmount, "online", "failed", "Insufficient Funds", currentDateTime);
+			            //if Failed Transaction:
+			            //tet3amer f table transaction
+			          transactionService.historiqueTransact(accountID, "Payment", paymentAmount, "online", "failed", "Insufficient Funds", currentDateTime);
 			            
 			            return "You Have insufficient Funds to perform this payment";
 			        }
@@ -310,12 +335,49 @@ public class TransactionRestController {
 			        transactionRepository.changeAccountBalanceById(newBalance1, accountID);
 
 			        // Log Successful Transaction:
-			        //transactionRepository.logTransaction(accountID, "Payment", paymentAmount, "online", "success", "Payment Transaction Successful",currentDateTime);
+			        transactionService.historiqueTransact(accountID, "Payment", paymentAmount, "online", "success", "Payment Transaction Successful",currentDateTime);
 
 			        successMessage = reasonCode;
 			      
 			        return "Payment Processed Successfully!";
 			    }
+				
+			/*  NORMALEMENT LEL BACK HEDHI . BECH KI NCO 3ALA USER YATLA3LI HISTORIQUE DES TRANSACTIONS MTE3OU	
+				@GetMapping("/payment_history")
+			    public ModelAndView getPaymentHistory(HttpSession session){
+			        // Set View:
+			        ModelAndView getPaymentHistoryPage = new ModelAndView("paymentHistory");
+
+			        // Get Logged In User:\
+			        user = (User) session.getAttribute("user");
+
+			        // Get Payment History byt id(kol user nkharajlou l paymrnt history mte3Ou)/ Records:
+			        List<PaymentHistory> userPaymentHistory = paymentHistoryRepository.getPaymentRecordsById(user.getId());
+
+			        getPaymentHistoryPage.addObject("payment_history", userPaymentHistory);
+
+			        return getPaymentHistoryPage;
+
+			    }
+
+
+			    @GetMapping("/transact_history")
+			    public ModelAndView getTransactHistory(HttpSession session){
+			        // Set View:
+			        ModelAndView getTransactHistoryPage = new ModelAndView("transactHistory");
+
+			        // Get Logged In User:\
+			        user = (User) session.getAttribute("user");
+
+			        // Get Payment History / Records:
+			        List<TransactionHistory> userTransactHistory = transactHistoryRepository.getTransactionRecordsById(user.getId());
+
+			        getTransactHistoryPage.addObject("transact_history", userTransactHistory);
+
+			        return getTransactHistoryPage;
+
+			    } */
+				
 				
 
 }

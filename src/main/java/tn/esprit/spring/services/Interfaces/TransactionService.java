@@ -25,6 +25,6 @@ public interface TransactionService {
 	//int updateTransactionByTransactType(TransactionType transactiontype);
 	void deleteTransactionByTransactType(String transaction_type);
 //insert
-	void makeTransact( Long account_id,String transaction_type, double amount,String source,String status, String reason_code,LocalDateTime created_at);
+	void historiqueTransact( Long account_id,String transaction_type, double amount,String source,String status, String reason_code,LocalDateTime created_at);
 
 }
