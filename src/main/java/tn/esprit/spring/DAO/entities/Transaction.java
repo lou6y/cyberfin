@@ -29,6 +29,12 @@ public class Transaction implements Serializable{
     private String status;
     private String reason_code;
     private LocalDateTime created_at;
+    
+	
+	@ManyToOne
+	Account accountransaction;
+
+    
 
     public Long getTransaction_id() {
         return transaction_id;
@@ -98,9 +104,6 @@ public class Transaction implements Serializable{
 	@JsonManagedReference
 	@OneToMany(cascade = CascadeType.ALL, mappedBy="transaction")
 	private Set<Claim> claim;
-	
-	@ManyToOne
-	Account accountransaction;
 
 	
 	

@@ -27,6 +27,7 @@ import tn.esprit.spring.DAO.entities.PaymentHistory;
 import tn.esprit.spring.DAO.entities.Transaction;
 import tn.esprit.spring.DAO.entities.TransactionHistory;
 import tn.esprit.spring.DAO.entities.User;
+import tn.esprit.spring.services.Interfaces.ClaimService;
 import tn.esprit.spring.services.Interfaces.TransactionService;
 import tn.esprit.spring.DAO.repositories.TransactionRepository;
 import tn.esprit.spring.DAO.repositories.PaymentHistoryRepository;
@@ -42,6 +43,9 @@ public class TransactionRestController {
 	@Autowired
 	TransactionService transactionService;
 	
+	@Autowired
+	ClaimService claimService;
+	
 	@Autowired 
 	TransactionRepository transactionRepository;
 	
@@ -53,12 +57,13 @@ public class TransactionRestController {
     double newBalance1;
     LocalDateTime currentDateTime = LocalDateTime.now();
     
-    
+  /*  
     @Autowired
     private PaymentHistoryRepository paymentHistoryRepository;
 
     @Autowired
     private TransactHistoryRepository transactHistoryRepository;
+  */ 
 
     User user;
     
@@ -190,44 +195,49 @@ public class TransactionRestController {
 			        // Init Error Message Value:
 			        String errorMessage;
 
-			        // TODO: CHECK FOR EMPTY FIELDS: felfront
+			        // CHECK FOR EMPTY FIELDS: felfront
 			        //if(transfer_from.isEmpty() || transfer_to.isEmpty() || transfer_amount.isEmpty()){
 			        //     return "The account transferring from and to along with the amount cannot be empty!";
 			           
 			       // }
 
-			        // TODO: CONVERT VARIABLES:
+			        // CONVERT VARIABLES:
 			        Long transferFromId = Long.parseLong(transfer_from);
 			        Long transferToId = Long.parseLong(transfer_to);
 			        double transferAmount = Double.parseDouble(transfer_amount);
 
-			        // TODO: CHECK IF TRANSFERRING INTO THE SAME ACCOUNT:
+			        // CHECK IF TRANSFERRING INTO THE SAME ACCOUNT:
 			        if(transferFromId == transferToId){
 			            return "Cannot Transfer Into The same Account, Please select the appropriate account to perform transfer";
 			            
 			        }
 
-			        // TODO: CHECK FOR 0 (ZERO) VALUES:
+			        //CHECK FOR 0 (ZERO) VALUES:
 			        if(transferAmount == 0){
 			            return errorMessage = "Cannot Transfer an amount of 0 , please enter a value greater than 0";
 			            
 			        }
-
-			     
-			        // TODO: GET CURRENT BALANCE:
+			        //  GET CURRENT BALANCE:
 			        double currentBalanceOfAccountTransferringFrom  = transactionRepository.getAccountBalance(transferFromId);
 
-			        // TODO: CHECK IF TRANSFER AMOUNT IS MORE THAN CURRENT BALANCE:
+			        //CHECK IF TRANSFER AMOUNT IS MORE THAN CURRENT BALANCE:
 			        if(currentBalanceOfAccountTransferringFrom < transferAmount){
 			         
-			            //historique Failed Transaction:
+			            //Failed Transaction:
 			            transactionService.historiqueTransact(transferFromId, "Transfer", transferAmount, "online", "failed", "Insufficient Fund", currentDateTime);
+			            
+			          //SINON MECH BECH YA3REF RECLAMATION 3ALA ENA TRANSACTION TJI (LEZEM NA3REF L ID MTE3HA EKA ALECH 3MALT gettransctionid by currentdatetime(w mech account_id sinon yraja3li barcha results)
+				          Long transaction_transaction_id=claimService.findTopByOrderByTransactIdDesc(currentDateTime);
+				          
+				        //tjini reclamation automatique
+				          claimService.failedTransact(transaction_transaction_id,transferFromId ,"Transfer",transferAmount, "online","failed", "Insufficient Funds", currentDateTime, "not treated");  
+				          
 			            return "You Have insufficient Funds to perform this Transfer!";
 			        }
 
 			        double  currentBalanceOfAccountTransferringTo = transactionRepository.getAccountBalance(transferToId);
 
-			        // TODO: SET NEW BALANCE:
+			        // SET NEW BALANCE:
 			        double newBalanceOfAccountTransferringFrom = currentBalanceOfAccountTransferringFrom - transferAmount;
 
 			        double newBalanceOfAccountTransferringTo = currentBalanceOfAccountTransferringTo + transferAmount;
@@ -270,6 +280,13 @@ public class TransactionRestController {
 			        	String errorMessage = "You Have insufficient Funds to perform this Withdrawal!";
 			            // Log Failed Transaction:
 			            transactionService.historiqueTransact(accountID1, "Withdrawal", withdrawal_amount, "online", "failed", "Insufficient Funds", currentDateTime);
+			            
+			            
+			            Long transaction_transaction_id=claimService.findTopByOrderByTransactIdDesc(currentDateTime);
+				          
+				        //tjini reclamation automatique
+				          claimService.failedTransact(transaction_transaction_id,accountID1 ,"Withdrawal",withdrawal_amount, "online","failed", "Insufficient Funds", currentDateTime, "not treated");
+			            
 			            return "You Have insufficient Funds to perform this Withdrawal!";
 			        }
 					
@@ -290,6 +307,7 @@ public class TransactionRestController {
 				
 				
 				//PAYMENT // EL ACCOUNT_ID HOUWA COMPTE TE3I LI BECH ENA7I MENNOU FLOUS
+				//li fel param houwa libech n3amrou fel swagger
 				@PostMapping("/payment")
 			    public String payment(@RequestParam("beneficiary")String beneficiary,
 			                          @RequestParam("account_number")String account_number,
@@ -317,11 +335,18 @@ public class TransactionRestController {
 			        if(currentBalance1 < paymentAmount){
 			            errorMessage = "You Have insufficient Funds to perform this payment";
 			            String reasonCode = "Could not Processed Payment due to insufficient funds!";
+			            //kenfailed payment kifkif tet3amer f table payment
 			            paymentRepository.makePayment(accountID, beneficiary, account_number, paymentAmount, reference, "failed", reasonCode, currentDateTime);
 			            //if Failed Transaction:
 			            //tet3amer f table transaction
 			          transactionService.historiqueTransact(accountID, "Payment", paymentAmount, "online", "failed", "Insufficient Funds", currentDateTime);
-			            
+			          
+			          //SINON MECH BECH YA3REF RECLAMATION 3ALA ENA TRANSACTION TJI (LEZEM NA3REF L ID MTE3HA EKA ALECH 3MALT gettransctionit by currentdatetime
+			          Long transaction_transaction_id=claimService.findTopByOrderByTransactIdDesc(currentDateTime);
+			          
+			        //tjini reclamation automatique
+			          claimService.failedTransact(transaction_transaction_id,accountID,"Payment",paymentAmount, "online","failed", "Insufficient Funds", currentDateTime, "not treated");  
+			         			            			     
 			            return "You Have insufficient Funds to perform this payment";
 			        }
 

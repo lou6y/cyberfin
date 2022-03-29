@@ -33,23 +33,26 @@ import tn.esprit.spring.services.Interfaces.ClaimService;
 	}
 	
 	// http://localhost:8083/SpringMVC/claim/retrieve-claim/1
-	@GetMapping("/retrieve-claim/{claim-id}")
+	@GetMapping("/retrieve-claim/{claim_id}")
 	@ResponseBody
-	public Claim retrieveClaim(@PathVariable("claim-id") Long claimId) {
-	return claimService.retrieveClaim(claimId);
+	public Claim retrieveClaim(@PathVariable("claim_id") Long claim_id) {
+	return claimService.retrieveClaim(claim_id);
 	}
 
+	/*
+	
 	// http://localhost:8083/SpringMVC/claim/add-claim
 	@PostMapping("/add-claim")
 	@ResponseBody
 	public Claim addClaim(@RequestBody Claim c)
 	{ //badwords
-		c.setDescription(claimService.verifyBadWords(c.getDescription()));
+	//	c.setStatus(claimService.verifyBadWords(c.getStatus()));
 		
 	Claim claim = claimService.addClaim(c);
 	return claim;
 	}
-
+*/
+	
 	// http://localhost:8083/SpringMVC/claim/modify-claim
 	@PutMapping("/modify-claim")
 	@ResponseBody
@@ -57,11 +60,11 @@ import tn.esprit.spring.services.Interfaces.ClaimService;
 	return claimService.updateClaim(claim);
 	}
 	
-	// http://localhost:8083/SpringMVC/claim/remove-claim/{claim-id}
-		@DeleteMapping("/remove-claim/{claim-id}")
+	// http://localhost:8083/SpringMVC/claim/remove-claim/{claim_id}
+		@DeleteMapping("/remove-claim/{claim_id}")
 		@ResponseBody
-		public void removeClaim(@PathVariable("claim-id") Long claimId) {
-		claimService.deleteClaim(claimId);
+		public void removeClaim(@PathVariable("claim_id") Long claim_id) {
+		claimService.deleteClaim(claim_id);
 		}
 	
 	

@@ -1,8 +1,12 @@
 package tn.esprit.spring.services.Interfaces;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.repository.query.Param;
+
 import tn.esprit.spring.DAO.entities.Claim;
+import tn.esprit.spring.DAO.entities.Transaction;
 
 public interface ClaimService {
 	
@@ -15,5 +19,16 @@ public interface ClaimService {
 	Claim updateClaim(Claim c);
 	Claim retrieveClaim(Long id);
 
+	//insert
+	void failedTransact(Long transaction_transaction_id, Long account_id,String transaction_type, double amount,String source,String status, String reason_code,LocalDateTime created_at,String state);
+
+	Long findTopByOrderByTransactIdDesc(LocalDateTime created_at);
+	
+	
+	
 	public String verifyBadWords(String sentence);
+	
+	
+	
+	
 }
