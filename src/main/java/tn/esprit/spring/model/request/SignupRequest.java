@@ -1,4 +1,4 @@
-package tn.esprit.spring.security.request;
+package tn.esprit.spring.model.request;
 
 import java.util.Set;
 

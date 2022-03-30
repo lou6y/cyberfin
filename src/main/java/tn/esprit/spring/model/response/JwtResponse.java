@@ -1,4 +1,4 @@
-package tn.esprit.spring.security.response;
+package tn.esprit.spring.model.response;
 
 import java.util.List;
 

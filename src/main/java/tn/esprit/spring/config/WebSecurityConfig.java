@@ -1,4 +1,4 @@
-package tn.esprit.spring.security.config;
+package tn.esprit.spring.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -14,8 +14,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import tn.esprit.spring.security.jwt.AuthEntryPoint;
-import tn.esprit.spring.security.jwt.AuthTokenFilter;
+import tn.esprit.spring.security.AuthEntryPoint;
+import tn.esprit.spring.security.AuthTokenFilter;
 import tn.esprit.spring.services.impls.UserDetailsServiceImpl;
 
 @Configuration
@@ -57,7 +57,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     http.cors().and().csrf().disable()
       .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
       .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
-      .authorizeRequests().antMatchers("/api/auth/**").permitAll()
+      .authorizeRequests().antMatchers("/**").permitAll()
+      .antMatchers("/api/auth/**").permitAll()
       .antMatchers("/api/user/**").permitAll()
       .anyRequest().authenticated();
 

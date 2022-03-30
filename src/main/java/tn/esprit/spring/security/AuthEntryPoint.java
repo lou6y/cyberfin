@@ -1,4 +1,4 @@
-package tn.esprit.spring.security.jwt;
+package tn.esprit.spring.security;
 
 import java.io.IOException;
 import java.util.HashMap;

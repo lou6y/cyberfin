@@ -28,11 +28,11 @@ import org.springframework.web.bind.annotation.RestController;
 import tn.esprit.spring.dao.entities.ERole;
 import tn.esprit.spring.dao.entities.Role;
 import tn.esprit.spring.dao.entities.User;
-import tn.esprit.spring.security.jwt.JwtUtils;
-import tn.esprit.spring.security.request.LoginRequest;
-import tn.esprit.spring.security.request.SignupRequest;
-import tn.esprit.spring.security.response.JwtResponse;
-import tn.esprit.spring.security.response.MessageResponse;
+import tn.esprit.spring.security.JwtUtils;
+import tn.esprit.spring.model.request.LoginRequest;
+import tn.esprit.spring.model.request.SignupRequest;
+import tn.esprit.spring.model.response.JwtResponse;
+import tn.esprit.spring.model.response.MessageResponse;
 import tn.esprit.spring.services.impls.UserDetailsImpl;
 import tn.esprit.spring.services.inters.IUserService;
 
