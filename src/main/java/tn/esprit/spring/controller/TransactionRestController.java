@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.repository.query.Param;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +35,7 @@ import tn.esprit.spring.DAO.entities.TransactionHistory;
 import tn.esprit.spring.DAO.entities.User;
 import tn.esprit.spring.services.Interfaces.ClaimService;
 import tn.esprit.spring.services.Interfaces.TransactionService;
+import tn.esprit.spring.services.Interfaces.TreasuryService;
 import tn.esprit.spring.DAO.repositories.TransactionRepository;
 import tn.esprit.spring.DAO.repositories.PaymentHistoryRepository;
 import tn.esprit.spring.DAO.repositories.PaymentRepository;
@@ -57,6 +59,9 @@ public class TransactionRestController {
 	@Autowired 
 	PaymentRepository paymentRepository;
 	
+	@Autowired 
+	TreasuryService treasuryService;
+	
 	
 	@Value("${jobs.enabled:false}")
 	  private boolean isEnabled;
@@ -64,6 +69,7 @@ public class TransactionRestController {
 	
 	double currentBalance1;
     double newBalance1;
+    double treasuryamount;
     LocalDateTime currentDateTime = LocalDateTime.now();
     
   /*  
@@ -257,7 +263,7 @@ public class TransactionRestController {
 			        // Changed The Balance Of the Account Transferring To:
 			        transactionRepository.changeAccountBalanceById(newBalanceOfAccountTransferringTo, transferToId);
 
-			        // if Successful Transaction: n3amer f tabel transaction
+			        // if Successful Transaction: n3amer f table transaction
 			        transactionService.historiqueTransact(transferFromId, "Transfer", transferAmount, "online", "success", "Transfer Transaction Successful",currentDateTime);
 
 			        //if balance=0 nzidou 10 fel compte w ndeclanchi el @scheduled
@@ -267,6 +273,11 @@ public class TransactionRestController {
 						double bl= newBalanceOfAccountTransferringFrom +=10;
 						transactionRepository.changeAccountBalanceById( bl, transferFromId);
 						fixedDelayMethod();   //KHEDMETT
+						do {
+						double oldtreasuryamount=treasuryService.getTreasury(treasuryamount);
+						double currenttreasuryamount= oldtreasuryamount-10;
+						treasuryService.changeTreasury(currenttreasuryamount);
+						}while (newBalanceOfAccountTransferringFrom ==0 );
 						return "added 10";
 					}
 			         
@@ -277,7 +288,7 @@ public class TransactionRestController {
 				@Scheduled(fixedDelay = 30000)
 				public void fixedDelayMethod() {
 					if (isEnabled)
-						System.out.println("just added 10 DT to an Account");
+						System.out.println("just withdrawed 10 DT from the Treasury");
 					
 				}
 				
