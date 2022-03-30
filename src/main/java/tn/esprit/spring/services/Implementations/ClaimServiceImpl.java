@@ -61,7 +61,10 @@ public class ClaimServiceImpl implements ClaimService{
 	}
 	
 	
-	
+	@Override
+	public int updateClByClaimId(String state, Long claim_id) {
+		return ClaimRep.updateClaimByClaimId(state, claim_id);
+}
 	
 	
 	
@@ -96,6 +99,8 @@ public class ClaimServiceImpl implements ClaimService{
         }
         return s;
     }
+
+	
 
 	
 	

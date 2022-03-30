@@ -24,6 +24,8 @@ public interface ClaimService {
 
 	Long findTopByOrderByTransactIdDesc(LocalDateTime created_at);
 	
+	int updateClByClaimId(String state,Long claim_id);
+	
 	
 	
 	public String verifyBadWords(String sentence);

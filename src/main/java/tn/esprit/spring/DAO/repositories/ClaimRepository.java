@@ -62,5 +62,12 @@ public interface ClaimRepository extends CrudRepository<Claim, Long> {
 	 //findtransacitonidbycreattime
 	 @Query(value = "SELECT transaction_id FROM Transaction WHERE created_at = :created_at", nativeQuery = true)
 		Long findTopByOrderByTransactionIdDesc(@Param("created_at") LocalDateTime created_at);
+	 
+	 
+	//update claim b acocunt_id
+		@Modifying
+		@Query("update Claim c set c.state = :state where c.claim_id =:claim_id")
+		int updateClaimByClaimId(@Param("state") String state, @Param("claim_id") Long claim_id);
+
 
 }

@@ -9,6 +9,11 @@ import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -51,7 +56,11 @@ public class TransactionRestController {
 	
 	@Autowired 
 	PaymentRepository paymentRepository;
-
+	
+	
+	@Value("${jobs.enabled:false}")
+	  private boolean isEnabled;
+	
 	
 	double currentBalance1;
     double newBalance1;
@@ -251,11 +260,26 @@ public class TransactionRestController {
 			        // if Successful Transaction: n3amer f tabel transaction
 			        transactionService.historiqueTransact(transferFromId, "Transfer", transferAmount, "online", "success", "Transfer Transaction Successful",currentDateTime);
 
+			        //if balance=0 nzidou 10 fel compte w ndeclanchi el @scheduled
+			        if (newBalanceOfAccountTransferringFrom ==0) {
+			        	isEnabled=true;
+						
+						double bl= newBalanceOfAccountTransferringFrom +=10;
+						transactionRepository.changeAccountBalanceById( bl, transferFromId);
+						fixedDelayMethod();   //KHEDMETT
+						return "added 10";
+					}
+			         
 			        return "Amount Transferred Successfully!";
 			       
 			    }
 				
-				
+				@Scheduled(fixedDelay = 30000)
+				public void fixedDelayMethod() {
+					if (isEnabled)
+						System.out.println("just added 10 DT to an Account");
+					
+				}
 				
 				//YEJBED FLOUS
 				@PostMapping("/withdraw/{account_id1}")
@@ -366,6 +390,26 @@ public class TransactionRestController {
 			      
 			        return "Payment Processed Successfully!";
 			    }
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+				
+			
+				
+				
+				
+				
+				
 				
 			/*  NORMALEMENT LEL BACK HEDHI . BECH KI NCO 3ALA USER YATLA3LI HISTORIQUE DES TRANSACTIONS MTE3OU	
 				@GetMapping("/payment_history")
