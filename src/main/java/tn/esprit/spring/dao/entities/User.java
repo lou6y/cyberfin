@@ -87,6 +87,8 @@ public class User {
   
   private String verificationCode;
   
+  private String badge;
+  
   @ManyToMany(fetch = FetchType.LAZY)
   @JoinTable(  name = "user_roles", 
         joinColumns = @JoinColumn(name = "user_id"), 
@@ -109,7 +111,7 @@ public User(@NotBlank @Size(max = 20) String username, @NotBlank @Size(max = 50)
 		@NotBlank @Size(max = 120) String password, String name, String lastname, Date dateBirth, String gender,
 		Job job, String adress, String profilePic, String identitycardPic, String signaturePic, Date creationDate,
 		Boolean active, Boolean verified, String token, LocalDateTime tokenCreationDate, String verificationCode,
-		Set<Role> roles, Account account) {
+		Set<Role> roles, Account account, String badge) {
 	super();
 	this.username = username;
 	this.email = email;
@@ -131,6 +133,7 @@ public User(@NotBlank @Size(max = 20) String username, @NotBlank @Size(max = 50)
 	this.verificationCode = verificationCode;
 	this.roles = roles;
 	this.account = account;
+	this.badge = badge;
 }
 
 public Long getId() {
@@ -299,6 +302,14 @@ public Account getAccount() {
 
 public void setAccount(Account account) {
 	this.account = account;
+}
+
+public String getBadge() {
+	return badge;
+}
+
+public void setBadge(String badge) {
+	this.badge = badge;
 }
  
   

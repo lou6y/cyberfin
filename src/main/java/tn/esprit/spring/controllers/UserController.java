@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,45 +29,59 @@ public class UserController {
 	  IUserService userService;
 	 
 	 @GetMapping("getAllUsers") 
-		public List<User> getAllUsers() 
+	 //@PreAuthorize("hasRole('ADMIN')")
+        public List<User> getAllUsers() 
 		{
 			return userService.showAllUsers();
 		} 
 		
 	@GetMapping("getUser/{username}")
-		public Optional<User> getUser(@PathVariable("username")String username)
+	//@PreAuthorize("hasRole('ADMIN')")
+        public Optional<User> getUser(@PathVariable("username")String username)
 		{
 		return userService.findByUsername(username);
 		}
 		
 	@GetMapping("/getusersbyjob/{job}")
-		public List<User> getUsersByJob(@PathVariable("job") Job job)
+	//@PreAuthorize("hasRole('ADMIN')")
+        public List<User> getUsersByJob(@PathVariable("job") Job job)
 		{
 			return userService.showUsersByJob(job);
 		}
 		
 	@GetMapping("/getusersbyrole/{roles}")
-		public List<User> getUsersByRole(@PathVariable("roles") Set<Role> roles)
+	//@PreAuthorize("hasRole('ADMIN')")
+        public List<User> getUsersByRole(@PathVariable("roles") Set<Role> roles)
 		{
 			return userService.showUsersByRole(roles);
 		}
 	 
 	@PutMapping("/modify-name/{username}")
+	//@PreAuthorize("hasRole('ADMIN')")
 	   public String modifyName(@PathVariable("username")String username, @RequestParam String name) 
 	   {
 		return userService.modifyName(username, name);
        }
 	
 	@PutMapping("/modify-email/{username}")
+	//@PreAuthorize("hasRole('ADMIN')")
 	   public String modifyEmail(@PathVariable("username")String username, @RequestParam String email) 
 	   {
 		return userService.modifyEmail(username, email);
        }
 	
 	@DeleteMapping("deleteUser/{idUser}") 
+	//@PreAuthorize("hasRole('ADMIN')")
 	public String DeleteUser(@PathVariable("idUser")Long idUser )
 	{
 		return userService.deleteUser(idUser);
 	}
-
+	
+	@PutMapping("/scoring")
+	//@PreAuthorize("hasRole('ADMIN')")
+	public void  Scoring()
+	{
+	userService.scoring();	
+	}
+	
 }

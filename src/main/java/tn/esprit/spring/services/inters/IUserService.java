@@ -28,6 +28,7 @@ public interface IUserService {
 	String modifyName(String username, String name);
 	String modifyEmail(String username, String Email);
 	String deleteUser(Long id);
+	void scoring();
 
 
 }

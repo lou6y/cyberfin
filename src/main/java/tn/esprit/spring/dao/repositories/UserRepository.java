@@ -1,5 +1,6 @@
 package tn.esprit.spring.dao.repositories;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -27,9 +28,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
   User findByToken(String token);
   
+  Optional<User> findBycreationDateGreaterThan(Date
+		  date);
+  
   @Query("SELECT u FROM User u WHERE u.job= ?1")
 	List<User> findUsersByJob(Job job);
 	
-	@Query("SELECT u FROM User u WHERE u.roles= ?1")
+  @Query("SELECT u FROM User u WHERE u.roles= ?1")
 	List<User> findUsersByRole(Set<Role> roles);
 }

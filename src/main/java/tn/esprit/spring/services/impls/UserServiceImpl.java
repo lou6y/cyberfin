@@ -3,6 +3,7 @@ package tn.esprit.spring.services.impls;
 import java.io.UnsupportedEncodingException;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -14,6 +15,7 @@ import javax.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -68,6 +70,7 @@ public class UserServiceImpl implements IUserService, IRoleService{
 		String randomCode = RandomString.make(64);
 	    user.setVerificationCode(randomCode);
 	    user.setVerified(false);
+	    user.setCreationDate(new Date(System.currentTimeMillis()));
 		return userRepository.save(user); }
 	
 	@Override
@@ -225,6 +228,144 @@ public class UserServiceImpl implements IUserService, IRoleService{
 		return "User has been successfully deleted !";
 	}
 	
-	
-	
+	@Scheduled(cron = " 0 0 0 * * * ")
+	@Override
+	public void scoring()
+	{
+		List<User> ListUsers = userRepository.findAll();
+		for(User user : ListUsers)	
+		{	
+			int score=0;
+			// score seniority ( 0 -> 1 )
+			long month = 2628000000L;
+			Date date = new Date(System.currentTimeMillis() - month );
+			if(user.getCreationDate().compareTo(date) > 0)
+			{ user.setBadge("NewClient");
+			userRepository.save(user);
+			}
+			else
+			{
+			    long year = 31560000000L;
+				Date date2 = new Date(System.currentTimeMillis() - year );	
+			    if (user.getCreationDate().compareTo(date2) < 0)
+			    {
+				score += 1;
+			    }
+			 // score balance ( 0 -> 2 )
+			    if (user.getAccount().getBalance() > 1000)
+			    	score += 2;
+			    	else if (user.getAccount().getBalance() > 500 )
+			    	score += 1;
+			 // score nb investment for investors ( 0 -> 4 )
+			    if (user.getRoles().contains("ROLE_INVESTOR"))
+			    { int nbinvest= user.getAccount().getInvests().size();
+			    	switch (nbinvest)
+			    	{
+			    	case (0):
+			    	break;
+			    	case (1):
+			    		score +=1;
+			    	break;
+			    	case (2):
+			    		score +=1;
+			    	break;
+			    	case (3):
+			    		score +=2;
+			    	break;
+			    	case (4):
+			    		score +=2;
+			    	break;
+			    	case (5):
+			    		score +=3;
+			    	break;
+			    	case (6):
+			    		score +=3;
+			    	break;
+			    	default:
+			    	score +=4;
+			    	}
+			    }
+			    if (user.getRoles().contains("ROLE_CLIENT"))
+			    {
+			    // score nb loans for clients ( 0 -> 2) & score nb associations for clients ( 0 -> 2)
+			    // ( 0 -> 4)
+			    int nbloan=user.getAccount().getLoans().size();
+			    switch (nbloan)
+		    	{
+		    	case (0):
+		    	break;
+		    	case (1):
+		    		score +=1;
+		    	break;
+		    	case (2):
+		    		score +=1;
+		    	break;
+		    	default:
+		    	score +=2;
+		    	}
+			    int nbassociation=user.getAccount().getAssociations().size();
+			    switch (nbassociation)
+		    	{
+		    	case (0):
+		    	break;
+		    	case (1):
+		    		score +=1;
+		    	break;
+		    	case (2):
+		    		score +=1;
+		    	break;
+		    	default:
+		    	score +=2;
+		    	}
+			    }
+			    
+			    
+			
+		switch (score)
+		{
+		case (0):
+			user.setBadge("Inactive");
+		userRepository.save(user);
+			break;
+		case (1):
+			user.setBadge("Inactive");
+		userRepository.save(user);
+			break;
+		case (2):
+			user.setBadge("Inactive");
+		userRepository.save(user);
+			break;
+		case (3):
+			user.setBadge("Normal");
+		userRepository.save(user);
+			break;
+		case (4):
+			user.setBadge("Normal");
+		userRepository.save(user);
+			break;
+		case (5):
+			user.setBadge("Good");
+		userRepository.save(user);
+			break;
+		case (6):
+			user.setBadge("Good");
+		userRepository.save(user);
+			break;
+		case (7):
+			user.setBadge("Verygood");
+		userRepository.save(user);
+			break;
+		case (8):
+			user.setBadge("Verygood");
+		userRepository.save(user);
+			break;
+		case (9):
+			user.setBadge("Excellent");
+		userRepository.save(user);
+			break;		
+		}
+		}
+		}
+
+}
 }
