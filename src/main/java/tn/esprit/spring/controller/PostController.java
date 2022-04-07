@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import tn.esprit.spring.services.Interf.*;
@@ -77,7 +78,7 @@ public class PostController {
     public String getFobiddenWords() {
         return PostService.getForbiddenWords();
     }
-    //http://localhost:8089/SpringMVC/Post/setforbidden
+    //http://localhost:8083/SpringMVC/Post/setforbidden
     @PostMapping("/setforbidden")
     @ResponseBody
     public void setForbiddenWords(@RequestBody String forbiddenWords) {
@@ -89,7 +90,7 @@ public class PostController {
 
 	@PutMapping("createPostForbidden/{userId}")
 	@ResponseBody
-	public void createPostForbidden(@RequestBody Post Post,@PathVariable("userId") long userId) {
-		PostService.createPostForbidden(Post,userId);
+	public void createPostForbidden(@RequestParam("postId") int postId ,@PathVariable("userId") long userId) {
+		PostService.createPostForbidden(postId,userId);
 	}
 }

@@ -21,6 +21,7 @@ public interface IPostService {
 	void createPost(Post Post, long userId);
 
 	void SharePost(int PostId, long UserId);
+	void createPostForbidden(int postId, long userId);
 	
 
 }
