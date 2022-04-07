@@ -27,7 +27,7 @@ public class AssociationRestController {
 		// http://localhost:8081/CyberFin/association/retrieve-all-association
 		@GetMapping("/retrieve-all-association")
 		@ResponseBody
-		public List<Association> getClient() {
+		public List<Association> getAssociation() {
 			List<Association> listassociation = associationservice.retriveAllAssociation();
 			return listassociation;
 			}
@@ -93,6 +93,30 @@ public class AssociationRestController {
 					List<Association> association = associationservice.retrieveAssociationByTime();
 					return association;
 					}
+				
+				//http://localhost:8081/CyberFin/association/add-participant/1/1
+				@PutMapping("/add-participant/{association-id}/{account-id}")
+				@ResponseBody
+				public void addParticipant(@PathVariable("association-id") Long AssociationId,@PathVariable("account-id") Long ParticipantId) {
+				associationservice.ajouterParticipant(AssociationId, ParticipantId);
+				}
+				
+				// http://localhost:8081/CyberFin/association/retrieve-participants/1
+				@GetMapping("/retrieve-participants/{association-id}")
+				@ResponseBody
+				public List<Long> getParticipants(@PathVariable("association-id") Long AssociationId)
+				{
+						List<Long> participants = associationservice.afficherParticipants(AssociationId);
+					return participants;
+					}
+				
+				// http://localhost:8081/CyberFin/association/retrieve-associationScore/{user-id}
+				@GetMapping("/retrieve-associationScore/{user-id}")
+				@ResponseBody
+				public List<Association> afficheAssociationScore(@PathVariable("user-id") Long id) {
+				return associationservice.retriveAssociationByScore(id);
+				}
+				
 		
 	
 	

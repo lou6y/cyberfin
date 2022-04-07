@@ -19,7 +19,16 @@ public interface AssociationRepository extends CrudRepository<Association,Long>{
 	@Query("SELECT a FROM Association a WHERE a.places= ?1")
 	List<Association> retrieveAssociationByPlace(int p);
 	
-	@Query("select a From Association a where a.finishDate<:CURRENT_DATE")
+	@Query("select a From Association a where a.finishDate<CURRENT_DATE")
 	List<Association> retrieveAssociationByT();
+	
+	@Query("SELECT a FROM Association a WHERE a.intrests<3")
+	List<Association> score500();
+	@Query("SELECT a FROM Association a WHERE a.intrests<6 And a.intrests>3")
+	List<Association> score350();
+	@Query("SELECT a FROM Association a WHERE a.intrests>9 ")
+	List<Association> scoreMin();
 
+	
+	
 }
