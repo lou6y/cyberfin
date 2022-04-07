@@ -77,6 +77,13 @@ public class UserController {
 		return userService.deleteUser(idUser);
 	}
 	
+	@GetMapping("getbalancebyjob/{job}") 
+	//@PreAuthorize("hasRole('ADMIN')")
+	public Long  getbalancebyjob(@PathVariable("job")Job job )
+	{
+		return userService.balanceByJob(job);
+	}
+	
 	@PutMapping("/scoring")
 	//@PreAuthorize("hasRole('ADMIN')")
 	public void  Scoring()

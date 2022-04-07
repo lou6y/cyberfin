@@ -37,10 +37,9 @@ public class Account {
   public Account() {
   }
 
-public Account(Long balance, User user) {
+public Account(Long balance) {
 	super();
 	this.balance = balance;
-	this.user = user;
 }
 
 public Long getId() {

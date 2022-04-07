@@ -1,8 +1,7 @@
 package tn.esprit.spring.dao.entities;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
-
+import java.util.Date;
 import javax.persistence.*;
 
 
@@ -32,10 +31,10 @@ public class Invest implements Serializable{
     private double interest ;
 	
 	@Column(name = "Invest_Start_Date")
-	private LocalDateTime Investstart;
+	private Date Investstart;
 	
 	@Column(name = "Invest_End_Date")
-	private LocalDateTime Investend;
+	private Date Investend;
 	
 	@Column(name = "Email")
 	private String Email;
@@ -80,19 +79,19 @@ public class Invest implements Serializable{
 		this.interest = interest;
 	}
 
-	public LocalDateTime getInveststart() {
+	public Date getInveststart() {
 		return Investstart;
 	}
 
-	public void setInveststart(LocalDateTime investstart) {
+	public void setInveststart(Date investstart) {
 		Investstart = investstart;
 	}
 
-	public LocalDateTime getInvestend() {
+	public Date getInvestend() {
 		return Investend;
 	}
 
-	public void setInvestend(LocalDateTime investend) {
+	public void setInvestend(Date investend) {
 		Investend = investend;
 	}
 

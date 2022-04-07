@@ -69,4 +69,7 @@ public interface TransactionRepository extends CrudRepository<Transaction, Long>
 	//stat
 	@Query("SELECT t From Transaction t Where t.created_at BETWEEN :date1 AND :date2 ORDER BY t.created_at ASC")
 	List<Transaction> ListTransactionOfweekAgo(@Param("date1") Date date1,@Param("date2") Date date2);
+	
+	@Query("SELECT Count(t) FROM Transaction t WHERE t.created_at > :date AND t.accountransaction = :accountid")
+	int NbTransactionLastdate(@Param("date") Date date, @Param("accountid") Long accountid);
 }

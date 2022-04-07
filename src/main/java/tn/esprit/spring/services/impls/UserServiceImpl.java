@@ -20,11 +20,14 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import net.bytebuddy.utility.RandomString;
+import tn.esprit.spring.dao.entities.Account;
 import tn.esprit.spring.dao.entities.ERole;
 import tn.esprit.spring.dao.entities.Job;
 import tn.esprit.spring.dao.entities.Role;
 import tn.esprit.spring.dao.entities.User;
+import tn.esprit.spring.dao.repositories.AccountRepository;
 import tn.esprit.spring.dao.repositories.RoleRepository;
+import tn.esprit.spring.dao.repositories.TransactionRepository;
 import tn.esprit.spring.dao.repositories.UserRepository;
 import tn.esprit.spring.services.inters.IRoleService;
 import tn.esprit.spring.services.inters.IUserService;
@@ -38,6 +41,12 @@ public class UserServiceImpl implements IUserService, IRoleService{
 
 	  @Autowired
 	  RoleRepository roleRepository;
+	  
+	  @Autowired
+	  AccountRepository accountRepository;
+	  
+	  @Autowired
+	  TransactionRepository transactRepository;
 	  
 	  @Autowired
 		private JavaMailSender mailSender;
@@ -71,6 +80,9 @@ public class UserServiceImpl implements IUserService, IRoleService{
 	    user.setVerificationCode(randomCode);
 	    user.setVerified(false);
 	    user.setCreationDate(new Date(System.currentTimeMillis()));
+	    Account acc = new Account(10L);
+	    accountRepository.save(acc);
+	    user.setAccount(acc);
 		return userRepository.save(user); }
 	
 	@Override
@@ -228,6 +240,18 @@ public class UserServiceImpl implements IUserService, IRoleService{
 		return "User has been successfully deleted !";
 	}
 	
+	@Override
+	public Long balanceByJob (Job job)
+	{
+		List<User> ListUsersByJob = userRepository.findUsersByJob(job);
+		Long somme = 0L, i = 0L;
+		for(User user : ListUsersByJob)
+		{somme = somme + user.getAccount().getBalance();
+		i++;
+		}
+		return (somme/i);
+	}
+	
 	@Scheduled(cron = " 0 0 0 * * * ")
 	@Override
 	public void scoring()
@@ -236,135 +260,68 @@ public class UserServiceImpl implements IUserService, IRoleService{
 		for(User user : ListUsers)	
 		{	
 			int score=0;
+			String badge = "";
 			// score seniority ( 0 -> 1 )
 			long month = 2628000000L;
-			Date date = new Date(System.currentTimeMillis() - month );
+			Date date = new Date(System.currentTimeMillis() - month);
 			if(user.getCreationDate().compareTo(date) > 0)
-			{ user.setBadge("NewClient");
-			userRepository.save(user);
-			}
+			{ badge="NewClient";}
 			else
 			{
 			    long year = 31560000000L;
-				Date date2 = new Date(System.currentTimeMillis() - year );	
+				Date date2 = new Date(System.currentTimeMillis() - year);	
 			    if (user.getCreationDate().compareTo(date2) < 0)
 			    {
 				score += 1;
 			    }
-			 // score balance ( 0 -> 2 )
-			    if (user.getAccount().getBalance() > 1000)
-			    	score += 2;
-			    	else if (user.getAccount().getBalance() > 500 )
+			 // score balance ( 0 -> 2 
+                Job job = user.getJob();
+			    if (user.getAccount().getBalance() > balanceByJob(job))
 			    	score += 1;
+			    if (user.getAccount().getBalance() > 500 )
+			    	score += 1;
+			 // score nb transactions last 1 year ( 0 -> 2 )
+			    int nbtransactions = transactRepository.NbTransactionLastdate(date2, user.getId());
+			    if (nbtransactions < 3)
+				    score +=1;
+					else score +=2;
 			 // score nb investment for investors ( 0 -> 4 )
 			    if (user.getRoles().contains("ROLE_INVESTOR"))
 			    { int nbinvest= user.getAccount().getInvests().size();
-			    	switch (nbinvest)
-			    	{
-			    	case (0):
-			    	break;
-			    	case (1):
-			    		score +=1;
-			    	break;
-			    	case (2):
-			    		score +=1;
-			    	break;
-			    	case (3):
-			    		score +=2;
-			    	break;
-			    	case (4):
-			    		score +=2;
-			    	break;
-			    	case (5):
-			    		score +=3;
-			    	break;
-			    	case (6):
-			    		score +=3;
-			    	break;
-			    	default:
-			    	score +=4;
-			    	}
+			    if (nbinvest < 3)
+					score+=1;
+					else if (nbinvest < 5)
+					score+=2;
+					else if (nbinvest < 7)
+					score+=3;
+					else score+=4;
 			    }
 			    if (user.getRoles().contains("ROLE_CLIENT"))
 			    {
 			    // score nb loans for clients ( 0 -> 2) & score nb associations for clients ( 0 -> 2)
 			    // ( 0 -> 4)
 			    int nbloan=user.getAccount().getLoans().size();
-			    switch (nbloan)
-		    	{
-		    	case (0):
-		    	break;
-		    	case (1):
-		    		score +=1;
-		    	break;
-		    	case (2):
-		    		score +=1;
-		    	break;
-		    	default:
-		    	score +=2;
-		    	}
+			    if (nbloan < 3)
+			    score +=1;
+				else score +=2;
 			    int nbassociation=user.getAccount().getAssociations().size();
-			    switch (nbassociation)
-		    	{
-		    	case (0):
-		    	break;
-		    	case (1):
-		    		score +=1;
-		    	break;
-		    	case (2):
-		    		score +=1;
-		    	break;
-		    	default:
-		    	score +=2;
-		    	}
+			    if (nbassociation < 3)
+		    	score +=1;
+			    else score +=2;
 			    }
 			    
-			    
-			
-		switch (score)
-		{
-		case (0):
-			user.setBadge("Inactive");
-		userRepository.save(user);
-			break;
-		case (1):
-			user.setBadge("Inactive");
-		userRepository.save(user);
-			break;
-		case (2):
-			user.setBadge("Inactive");
-		userRepository.save(user);
-			break;
-		case (3):
-			user.setBadge("Normal");
-		userRepository.save(user);
-			break;
-		case (4):
-			user.setBadge("Normal");
-		userRepository.save(user);
-			break;
-		case (5):
-			user.setBadge("Good");
-		userRepository.save(user);
-			break;
-		case (6):
-			user.setBadge("Good");
-		userRepository.save(user);
-			break;
-		case (7):
-			user.setBadge("Verygood");
-		userRepository.save(user);
-			break;
-		case (8):
-			user.setBadge("Verygood");
-		userRepository.save(user);
-			break;
-		case (9):
-			user.setBadge("Excellent");
-		userRepository.save(user);
-			break;		
+		if (score < 3)
+		badge=("Inactive");
+		else if (score < 5)
+		badge=("Normal");
+		else if (score < 7)
+		badge=("Good");
+		else if (score < 9)
+		badge=("Verygood");
+		else badge=("Excellent");
 		}
-		}
+		user.setBadge(badge);	
+		userRepository.save(user);
 		}
 
 }

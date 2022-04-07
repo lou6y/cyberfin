@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface AccountRepository extends CrudRepository<Account, Long>{
 	
-	
 	//ba3d njarreb nhezhom l TRANSACTIONREPOSITORY
 	//wHere acc.id_account (nafs l esm fel database)
 	@Modifying

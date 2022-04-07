@@ -2,6 +2,7 @@ package tn.esprit.spring.dao.entities;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -21,14 +22,13 @@ public class Transaction implements Serializable{
 	@Id
 	@GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long transaction_id;
-	
     private Long account_id;
     private String transaction_type;
     private double amount;
     private String source;
     private String status;
     private String reason_code;
-    private LocalDateTime created_at;
+    private Date created_at;
     
 	
 	@ManyToOne
@@ -92,11 +92,11 @@ public class Transaction implements Serializable{
         this.reason_code = reason_code;
     }
 
-    public LocalDateTime getCreated_at() {
+    public Date getCreated_at() {
         return created_at;
     }
 
-    public void setCreated_at(LocalDateTime created_at) {
+    public void setCreated_at(Date created_at) {
         this.created_at = created_at;
     }
 
