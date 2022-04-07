@@ -39,6 +39,6 @@ public class ReactController {
 	// http://localhost:8089/SpringMVC/React/ReactToPost1/2/1/1
 	@GetMapping("LikeDislikePost/{reactionId}/{PostId}/{UserId}")
 	public void LikeDislikePost(@PathVariable("reactionId")int reaction,@PathVariable("PostId") int PostId,@PathVariable("UserId") int UserId) {
-		ReactService.LikeDislikePost(reaction, PostId, userId);
+		ReactService.LikeDislikePost(reaction, PostId, UserId);
 	}
 }
