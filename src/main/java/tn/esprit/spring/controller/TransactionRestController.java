@@ -1,6 +1,7 @@
 package tn.esprit.spring.controller;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import io.swagger.annotations.ApiOperation;
+import tn.esprit.spring.DAO.entities.Account;
+import tn.esprit.spring.DAO.entities.ClaimInfo;
 import tn.esprit.spring.DAO.entities.PaymentHistory;
 import tn.esprit.spring.DAO.entities.Transaction;
 import tn.esprit.spring.DAO.entities.TransactionHistory;
@@ -37,6 +40,8 @@ import tn.esprit.spring.services.Interfaces.ClaimService;
 import tn.esprit.spring.services.Interfaces.TransactionService;
 import tn.esprit.spring.services.Interfaces.TreasuryService;
 import tn.esprit.spring.DAO.repositories.TransactionRepository;
+import tn.esprit.spring.DAO.repositories.AccountRepository;
+import tn.esprit.spring.DAO.repositories.ClaimRepository;
 import tn.esprit.spring.DAO.repositories.PaymentHistoryRepository;
 import tn.esprit.spring.DAO.repositories.PaymentRepository;
 import tn.esprit.spring.DAO.repositories.TransactHistoryRepository;
@@ -62,6 +67,11 @@ public class TransactionRestController {
 	@Autowired 
 	TreasuryService treasuryService;
 	
+	@Autowired 
+	AccountRepository accountRepository;
+	
+	@Autowired 
+	ClaimRepository claimRepository;
 	
 	@Value("${jobs.enabled:false}")
 	  private boolean isEnabled;
@@ -99,6 +109,9 @@ public class TransactionRestController {
 		public Transaction retrieveTransaction(@PathVariable("transaction_id") Long transaction_id) {
 		return transactionService.retrieveTransaction(transaction_id);
 		}
+		
+		
+		
 
 		// http://localhost:8083/SpringMVC/transaction/add-transaction
 		@PostMapping("/add-transaction")
@@ -182,7 +195,7 @@ public class TransactionRestController {
 				///YSOB FLOUS
 				@PostMapping("/deposit/{account_id}")
 				public String deposit (@RequestParam("deposit_amount")double depositAmount, @PathVariable("account_id")Long accountID) {
-				
+				int taxperdeposit=10;
 				//get current balance
 					currentBalance1 = transactionRepository.getAccountBalance(accountID);
 				//CHECK FOR 0 VALUES
@@ -190,13 +203,20 @@ public class TransactionRestController {
 						return "withdrawal amount cannot be 0, please enter a value greater than 0";	
 					}
 					
-					//SET NEW BALANCE
-					 newBalance1 = currentBalance1 + depositAmount;
+					//SET NEW BALANCE nekhou alih 10dt
+					 newBalance1 = currentBalance1 + depositAmount -taxperdeposit;
 					
 					//UPDATE ACCOUNT BALANCE:
 					transactionRepository.changeAccountBalanceById(newBalance1, accountID);
 			        transactionService.historiqueTransact(accountID, "deposit", depositAmount, "online", "success", "Deposit Transaction Successful",currentDateTime);
 
+			        //if nb deposit>5 ma3atech nekhou alih tax
+			        int nbtransactionsbytype= transactionRepository.getnumbertransactionsbytypeandstatus(accountID,"deposit", "success");
+			        if(nbtransactionsbytype>=5) {
+			        	double newBalanceifdeposit5= newBalance1+taxperdeposit;
+			        	transactionRepository.changeAccountBalanceById(newBalanceifdeposit5, accountID);
+			        }
+			        	
 					
 					return "deposit successful";
 				}
@@ -207,7 +227,8 @@ public class TransactionRestController {
 			    public String transfer(@RequestParam("transfer_from") String transfer_from,
 			                           @RequestParam("transfer_to") String transfer_to,
 			                           @RequestParam("transfer_amount")String transfer_amount){
-			        // Init Error Message Value:
+					int taxpertransfer=5;
+					// Init Error Message Value:
 			        String errorMessage;
 
 			        // CHECK FOR EMPTY FIELDS: felfront
@@ -249,11 +270,13 @@ public class TransactionRestController {
 				          
 			            return "You Have insufficient Funds to perform this Transfer!";
 			        }
-
+			        
+			      //if nb claim fel transfer>5 ma3atech nekhou alih tax// AVEC JOINTURE 
+			        
 			        double  currentBalanceOfAccountTransferringTo = transactionRepository.getAccountBalance(transferToId);
 
-			        // SET NEW BALANCE:
-			        double newBalanceOfAccountTransferringFrom = currentBalanceOfAccountTransferringFrom - transferAmount;
+			        // SET NEW BALANCE://NZID NEKHOU 3AL TRANSFERINGFROM TAX
+			        double newBalanceOfAccountTransferringFrom = currentBalanceOfAccountTransferringFrom - transferAmount -taxpertransfer;
 
 			        double newBalanceOfAccountTransferringTo = currentBalanceOfAccountTransferringTo + transferAmount;
 
@@ -266,13 +289,22 @@ public class TransactionRestController {
 			        // if Successful Transaction: n3amer f table transaction
 			        transactionService.historiqueTransact(transferFromId, "Transfer", transferAmount, "online", "success", "Transfer Transaction Successful",currentDateTime);
 
+			        // if numberclaims by type transfer>2 nsem7ou fel tax li na7ithoulou
+			        int numberclaimsbytype= claimRepository.getnumberclaimsbytype(transferFromId,"Transfer");
+			        if(numberclaimsbytype>=2) {
+			        	double newBalanceifTransfer2= newBalanceOfAccountTransferringFrom+taxpertransfer;
+			        	transactionRepository.changeAccountBalanceById(newBalanceifTransfer2, transferFromId);
+			        }
+
+			        
+			        
 			        //if balance=0 nzidou 10 fel compte w ndeclanchi el @scheduled
 			        if (newBalanceOfAccountTransferringFrom ==0) {
 			        	isEnabled=true;
 						
 						double bl= newBalanceOfAccountTransferringFrom +=10;
 						transactionRepository.changeAccountBalanceById( bl, transferFromId);
-						fixedDelayMethod();   //KHEDMETT
+						//fixedDelayMethod();   //KHEDMETT
 						do {
 						double oldtreasuryamount=treasuryService.getTreasury(treasuryamount);
 						double currenttreasuryamount= oldtreasuryamount-10;
@@ -285,12 +317,49 @@ public class TransactionRestController {
 			       
 			    }
 				
-				@Scheduled(fixedDelay = 30000)
+				
+				//MARA kol ras 3am nzidhom flous w nahi mel treasury ken nb transaction li 3malhom >=5
+				@Scheduled(cron = " 0 0 0 1 1 * ")
 				public void fixedDelayMethod() {
-					if (isEnabled)
-						System.out.println("just withdrawed 10 DT from the Treasury");
 					
+				//	if (isEnabled)
+					//	System.out.println("just withdrawed 10 DT from the Treasury");
+					//int nbtrperaccount=0;
+					List<Transaction> ListTransactions = (List<Transaction>)(transactionRepository.findAll());
+					
+					for(Transaction tr : ListTransactions)	
+					{	
+						Long id= tr.getAccount_id();
+						List <Transaction> ListTr = (List<Transaction>)(transactionService.retrieveTransactionByAccid(id));
+						
+						long nbtrperaccount = ListTr .stream().count();
+						//si nb transactions li 3malhom >=5 nzidou fel balance 10dt
+						if(nbtrperaccount>= 5)
+						{ 
+							Account Listaccount = accountRepository.findById(id).get();
+							//getIdAccount()  setBalance()
+								double bal= Listaccount.getBalance();
+								double newbal=bal+10;
+								Listaccount.setBalance(newbal);
+							accountRepository.save(Listaccount);
+							
+						transactionRepository.save(tr);
+						double oldtreasuryamount=treasuryService.getTreasury(treasuryamount);
+						double newtreasuryamount=oldtreasuryamount-10;
+						treasuryService.changeTreasury(newtreasuryamount);
+						
+						}
+					
+				}}
+				
+				//teb3a l @scheduled
+				//nthabet 9adech 3andi men transaction per id bech nkhadem el scheduling
+				@GetMapping("/retrieve-transactionbyid/{account_id}")
+				@ResponseBody
+				public List<Transaction> retrieveTransactionByAccid(@PathVariable("account_id") Long account_id){
+					return transactionService.retrieveTransactionByAccid(account_id);
 				}
+				
 				
 				//YEJBED FLOUS
 				@PostMapping("/withdraw/{account_id1}")
@@ -349,7 +418,10 @@ public class TransactionRestController {
 			                          @RequestParam("account_id")String account_id,
 			                          @RequestParam("reference")String reference,
 			                          @RequestParam("payment_amount")String payment_amount){
-
+//TRAITEMENT AUTOMATIQUE reclamation tetreata automatiquement
+					//select from claim claim.transaction.account.user  (nchouf reclamation teb3a ena user) FEL JOITURE
+					//el scheduled ta3mel actualisation auto lel database (najem na3mala  tbadel claim to treated)
+					//stat 3ala 9adech men rec fel 3am
 			        String errorMessage;
 			        String successMessage;
 
@@ -377,6 +449,8 @@ public class TransactionRestController {
 			          transactionService.historiqueTransact(accountID, "Payment", paymentAmount, "online", "failed", "Insufficient Funds", currentDateTime);
 			          
 			          //SINON MECH BECH YA3REF RECLAMATION 3ALA ENA TRANSACTION TJI (LEZEM NA3REF L ID MTE3HA EKA ALECH 3MALT gettransctionit by currentdatetime
+			        //bech najamt nrecuperi el transaction_id mta3 el claim fel transactionrestcontroller
+			     	 //findtransactionidbycreattime= findTopByOrderByTransactIdDesc(currentDateTime)
 			          Long transaction_transaction_id=claimService.findTopByOrderByTransactIdDesc(currentDateTime);
 			          
 			        //tjini reclamation automatique
@@ -402,12 +476,7 @@ public class TransactionRestController {
 			        return "Payment Processed Successfully!";
 			    }
 				
-				
-				
-				
-				
-				
-				
+		
 				
 				
 				
@@ -420,9 +489,9 @@ public class TransactionRestController {
 				
 				
 				
+				//BECH N3ADI FEL PARA ID USER W HOUWA YA3TINI HISTORIQUE MTE3OU
 				
-				
-			/*  NORMALEMENT LEL BACK HEDHI . BECH KI NCO 3ALA USER YATLA3LI HISTORIQUE DES TRANSACTIONS MTE3OU	
+			/*  NORMALEMENT LEL FRONT HEDHI . BECH KI NCO 3ALA USER YATLA3LI HISTORIQUE DES TRANSACTIONS MTE3OU	
 				@GetMapping("/payment_history")
 			    public ModelAndView getPaymentHistory(HttpSession session){
 			        // Set View:

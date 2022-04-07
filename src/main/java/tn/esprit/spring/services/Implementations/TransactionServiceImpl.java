@@ -55,6 +55,12 @@ public class TransactionServiceImpl implements TransactionService{
 	}
 	
 	@Override
+	public List<Transaction> retrieveTransactionByAccid(Long account_id) {
+		return TransactionRep.retrieveTransactionByAccountid(account_id);
+	}
+	
+	
+	@Override
 	public Map<String, Integer> NbrTransactionWeek(){
 		
 	        Map<String, Integer> mapTransactweek = new HashMap<String, Integer>();

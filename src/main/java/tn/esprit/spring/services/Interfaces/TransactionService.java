@@ -28,6 +28,11 @@ public interface TransactionService {
 //insert
 	void historiqueTransact( Long account_id,String transaction_type, double amount,String source,String status, String reason_code,LocalDateTime created_at);
 
+	//lel scheduled
+	List<Transaction> retrieveTransactionByAccid(Long account_id);
+	
+	
+
 
 		  
 	

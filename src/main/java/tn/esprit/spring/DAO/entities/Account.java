@@ -1,16 +1,22 @@
 package tn.esprit.spring.DAO.entities;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
 @Entity
 public class Account implements Serializable {
@@ -21,6 +27,7 @@ public class Account implements Serializable {
 	private double Balance;
 	@OneToOne(mappedBy="account")
 	private User user;
+	
 	public Account(Long idAccount, double balance, User user) {
 		super();
 		this.idAccount = idAccount;
@@ -60,7 +67,16 @@ public class Account implements Serializable {
 	@OneToMany(cascade = CascadeType.ALL, mappedBy="accountassociation")
 	private Set<Association> Associations;
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy="accountransaction")
-	private Set<Transaction> TransactionsAccounts;
+//	@OneToMany(cascade = CascadeType.ALL, mappedBy="accountransaction")
+//	private Set<Transaction> TransactionsAccounts;
+	
+	
+	@OneToMany(targetEntity= Transaction.class, cascade=CascadeType.ALL)
+	//el account id bech ywali foreign key
+	@JoinColumn(name="account_id", referencedColumnName="idAccount")  //KENET at_fk
+	private List<Transaction> transactions;
+	
+	
+	
 	
 }

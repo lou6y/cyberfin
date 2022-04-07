@@ -1,11 +1,11 @@
 package tn.esprit.spring.DAO.repositories;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.ManyToOne;
 
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -14,6 +14,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import tn.esprit.spring.DAO.entities.Claim;
+import tn.esprit.spring.DAO.entities.ClaimInfo;
 import tn.esprit.spring.DAO.entities.Status;
 import tn.esprit.spring.DAO.entities.Transaction;
 
@@ -26,22 +27,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Transactional
 @Repository
 public interface ClaimRepository extends CrudRepository<Claim, Long> {
-	
-	
-/*	private Long claim_id;
-	
-	@JsonBackReference
-	@ManyToOne
-	Transaction transaction;
-	private Long account_id;
-    private String transaction_type;
-    private double amount;
-    private String source;
-    private String status;
-    private String reason_code;
-    private LocalDateTime created_at;
-    private String state;  */
-	
+
 	//insert (AUDIT TRAIL)
 	 @Modifying
 	    @Transactional
@@ -68,6 +54,18 @@ public interface ClaimRepository extends CrudRepository<Claim, Long> {
 		@Modifying
 		@Query("update Claim c set c.state = :state where c.claim_id =:claim_id")
 		int updateClaimByClaimId(@Param("state") String state, @Param("claim_id") Long claim_id);
+		
+		
+		//NHEB NCHOUF CLAIM TEB3A L ENA ACCOUNTID + l ena userid w lena transaction type
+		////T3ADIT B CLAIM,TRANSACTION, ACCOUNT ,USER
+		@Query("select new tn.esprit.spring.DAO.entities.ClaimInfo(c.created_at, a.idAccount , a.Balance, t.transaction_type,u.id) from Claim c inner join Account a on c.account_id = a.idAccount inner join Transaction t on c.status = t.status inner join User u on a.idAccount = u.id ORDER BY a.idAccount")
+		public List<ClaimInfo> getClaimInfoWithConstrutorExp();
+		
+		 
+		@Query(value = "SELECT COUNT(ci.aid_account) FROM Claim_info ci WHERE aid_account = :aid_account AND ttypetransaction= :ttypetransaction", nativeQuery = true)
+	    int getnumberclaimsbytype(@Param("aid_account") Long aid_account, @Param("ttypetransaction") String ttypetransaction);
+	 
 
-
+	
+		
 }

@@ -13,7 +13,18 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
 //L HISTORIQUE TRANSACTION LKOL 
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 @Entity
 @Table( name = "Transaction")
 public class Transaction implements Serializable{
@@ -31,8 +42,8 @@ public class Transaction implements Serializable{
     private LocalDateTime created_at;
     
 	
-	@ManyToOne
-	Account accountransaction;
+//	@ManyToOne
+//	Account accountransaction;
 
     
 
@@ -105,7 +116,6 @@ public class Transaction implements Serializable{
 	@OneToMany(cascade = CascadeType.ALL, mappedBy="transaction")
 	private Set<Claim> claim;
 
-	
 	
 	
 	

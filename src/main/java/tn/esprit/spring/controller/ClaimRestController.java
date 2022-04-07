@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import tn.esprit.spring.DAO.entities.Claim;
+import tn.esprit.spring.DAO.entities.ClaimInfo;
+import tn.esprit.spring.DAO.repositories.ClaimRepository;
 import tn.esprit.spring.DAO.repositories.TransactionRepository;
 import tn.esprit.spring.services.Interfaces.ClaimService;
 
@@ -29,6 +31,9 @@ import tn.esprit.spring.services.Interfaces.ClaimService;
 
 	@Autowired
 	ClaimService claimService;
+	
+	@Autowired
+	ClaimRepository claimRepository;
 
 	// http://localhost:8083/SpringMVC/claim/retrieve-all-claims
 	@GetMapping("/retrieve-all-claims")
@@ -82,6 +87,19 @@ import tn.esprit.spring.services.Interfaces.ClaimService;
 		return claimService.updateClByClaimId("treated", claim_id);
 
 	}
+	
+	
+	
+	@GetMapping("/claiminfo")
+    public List<ClaimInfo> getClaimInfoWithConstrutorExp(){
+		return claimRepository.getClaimInfoWithConstrutorExp();
+	}
+	
+	
+	
+	
+    	
+	
 	
 }
 	

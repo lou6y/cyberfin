@@ -23,6 +23,10 @@ public interface TransactionRepository extends CrudRepository<Transaction, Long>
 	@Query("SELECT t FROM Transaction t WHERE t.transaction_type= :transaction_type")
 	List<Transaction> retrieveTransactionByTransactionType(@Param("transaction_type") String transaction_type);
 	
+	//select lel scheduled
+	@Query("SELECT t FROM Transaction t WHERE t.account_id= :account_id")
+	List<Transaction> retrieveTransactionByAccountid(@Param("account_id") Long account_id);
+	
 	//update
 //	@Modifying
 //	@Query("update Transaction t set t.transactionType = :transactiontype where t.sumToTransfer =:sumToTransfer")
@@ -63,6 +67,11 @@ public interface TransactionRepository extends CrudRepository<Transaction, Long>
 			                        @Param("status")String status,
 			                        @Param("reason_code")String reason_code,
 			                        @Param("created_at") LocalDateTime created_at);
+			 
+			 
+			 @Query(value = "SELECT COUNT(t.account_id) FROM Transaction t WHERE account_id = :account_id AND transaction_type= :transaction_type AND status= :status", nativeQuery = true)
+			    int getnumbertransactionsbytypeandstatus(@Param("account_id") Long account_id, @Param("transaction_type") String transaction_type, @Param("status") String status);
+			 		 
 		
 		
 	
