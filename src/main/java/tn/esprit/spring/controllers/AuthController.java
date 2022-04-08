@@ -26,14 +26,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import tn.esprit.spring.dao.entities.ERole;
+import tn.esprit.spring.dao.entities.RefreshToken;
 import tn.esprit.spring.dao.entities.Role;
 import tn.esprit.spring.dao.entities.User;
 import tn.esprit.spring.security.JwtUtils;
+import tn.esprit.spring.model.request.LogOutRequest;
 import tn.esprit.spring.model.request.LoginRequest;
 import tn.esprit.spring.model.request.SignupRequest;
+import tn.esprit.spring.model.request.TokenRefreshRequest;
 import tn.esprit.spring.model.response.JwtResponse;
 import tn.esprit.spring.model.response.MessageResponse;
+import tn.esprit.spring.model.response.TokenRefreshResponse;
+import tn.esprit.spring.refreshtoken.exception.TokenRefreshException;
 import tn.esprit.spring.services.impls.UserDetailsImpl;
+import tn.esprit.spring.services.inters.IRefreshTokenService;
 import tn.esprit.spring.services.inters.IUserService;
 
 
@@ -47,7 +53,9 @@ public class AuthController {
   @Autowired
   IUserService userService;
 
-
+  @Autowired
+  IRefreshTokenService refreshTokenService;
+  
   @Autowired
   PasswordEncoder encoder;
 
@@ -57,22 +65,22 @@ public class AuthController {
   @PostMapping("/signin")
   public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
-    Authentication authentication = authenticationManager.authenticate(
-        new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+    Authentication authentication = authenticationManager
+        .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
     SecurityContextHolder.getContext().setAuthentication(authentication);
-    String jwt = jwtUtils.generateJwtToken(authentication);
-    
-    UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();    
-    List<String> roles = userDetails.getAuthorities().stream()
-        .map(item -> item.getAuthority())
+
+    UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+
+    String jwt = jwtUtils.generateJwtToken(userDetails);
+
+    List<String> roles = userDetails.getAuthorities().stream().map(item -> item.getAuthority())
         .collect(Collectors.toList());
 
-    return ResponseEntity.ok(new JwtResponse(jwt, 
-                         userDetails.getId(), 
-                         userDetails.getUsername(), 
-                         userDetails.getEmail(), 
-                         roles));
+    RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+
+    return ResponseEntity.ok(new JwtResponse(jwt, refreshToken.getToken(), userDetails.getId(),
+        userDetails.getUsername(), userDetails.getEmail(), roles));
   }
 
   @PostMapping("/signup")
@@ -138,6 +146,27 @@ public class AuthController {
 	userService.sendEmail(user.getEmail(), response);
 
     return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+  }
+  
+  @PostMapping("/refreshtoken")
+  public ResponseEntity<?> refreshtoken(@Valid @RequestBody TokenRefreshRequest request) {
+    String requestRefreshToken = request.getRefreshToken();
+
+    return refreshTokenService.findByToken(requestRefreshToken)
+        .map(refreshTokenService::verifyExpiration)
+        .map(RefreshToken::getUser)
+        .map(user -> {
+          String token = jwtUtils.generateTokenFromUsername(user.getUsername());
+          return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
+        })
+        .orElseThrow(() -> new TokenRefreshException(requestRefreshToken,
+            "Refresh token is not in database!"));
+  }
+  
+  @PostMapping("/logout")
+  public ResponseEntity<?> logoutUser(@Valid @RequestBody LogOutRequest logOutRequest) {
+    refreshTokenService.deleteByUserId(logOutRequest.getUserId());
+    return ResponseEntity.ok(new MessageResponse("Log out successful!"));
   }
   
   @GetMapping("/verify")
