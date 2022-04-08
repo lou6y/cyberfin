@@ -25,14 +25,14 @@ public class PostController {
 
 
 	
-	// http://localhost:8089/SpringMVC/Post/create
+	// http://localhost:8083/SpringMVC/Post/create
 
 	@PutMapping("create/{userId}")
 	@ResponseBody
 	public void createPost(@RequestBody Post Post,@PathVariable("userId") long userId) {
 		PostService.createPost(Post,userId);
 	}
-	// http://localhost:8089/SpringMVC/Post/SharePost
+	// http://localhost:8083/SpringMVC/Post/SharePost
 
 	@PutMapping("SharePost/{PostId}/{userId}")
 	@ResponseBody
@@ -40,7 +40,7 @@ public class PostController {
 		PostService.SharePost(PostId,userId);
 	}
 	
-	// http://localhost:8089/SpringMVC/Post/GetSharedPosts/1
+	// http://localhost:8083/SpringMVC/Post/GetSharedPosts/1
 	@GetMapping("/GetSharedPosts/{PostId}")
 	@ResponseBody
 	public List<Post> GetSharedPosts(@PathVariable("PostId") int PostId) {
@@ -49,7 +49,7 @@ public class PostController {
 		return Posts;
 	}
 	
-	// http://localhost:8089/SpringMVC/Post/getAllPosts
+	// http://localhost:8083/SpringMVC/Post/getAllPosts
 	@GetMapping("/getAllPosts")
 	@ResponseBody
 	public List<Post> getAllPosts() {
@@ -58,21 +58,21 @@ public class PostController {
 		return Posts;
 
 	}
-	// http://localhost:8089/SpringMVC/Post/delete/1
+	// http://localhost:8083/SpringMVC/Post/delete/1
 
 	@DeleteMapping("/delete/{id}")
 	public void deletePost(@PathVariable("id") int PostId) {
 
 		PostService.deletePost(PostId);		
 	}
-	// http://localhost:8089/SpringMVC/Post/update
+	// http://localhost:8083/SpringMVC/Post/update
 
 	@PutMapping("/update")
 	public void updatePost(@RequestBody Post Post) {
 		PostService.updatePost(Post);
 	}
 	
-	//http://localhost:8089/SpringMVC/Post/getforbidden
+	//http://localhost:8083/SpringMVC/Post/getforbidden
     @GetMapping("/getforbidden")
     @ResponseBody
     public String getFobiddenWords() {
@@ -86,7 +86,7 @@ public class PostController {
             forbiddenWords="";
         PostService.setForbiddenWords(forbiddenWords);
     }
-	// http://localhost:8089/SpringMVC/Post/createPostForbidden/1
+	// http://localhost:8083/SpringMVC/Post/createPostForbidden/1
 
 	@PutMapping("createPostForbidden/{userId}")
 	@ResponseBody

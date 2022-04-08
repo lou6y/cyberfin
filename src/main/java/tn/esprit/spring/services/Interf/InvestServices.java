@@ -20,6 +20,9 @@ public interface InvestServices {
 	double ajouterInterets(int getSolde);
 	
 	Invest retrieveInvest(Long userId);
+	float ajouterInterets(long accountId);
+	float EvaluateSeniority(Long id_account);
+	String scoreAccount(Long idClient);
 	
 	
 }

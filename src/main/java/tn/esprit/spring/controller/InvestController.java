@@ -40,7 +40,7 @@ public Invest retrieveInvest(@PathVariable("Invest-id") Long InvestId) {
 return Investser.retrieveInvest(InvestId); }
 
 
-@PostMapping("/add-Invest")
+@PostMapping("/addInvest")
 @ResponseBody
 public Invest addClient(@RequestBody Invest  c)
 {
@@ -64,8 +64,11 @@ public double simulator(@RequestParam(name="montant") int montant ,@RequestParam
 }
 @PostMapping("/epagne")
 @ResponseBody
-public double ajouterInterets(@RequestParam(name="montant") int getSolde ) {
-        return Investser.ajouterInterets(getSolde);
+public double ajouterInterets(@RequestParam(name="userId") int userId ) {
+        return Investser.ajouterInterets(userId);
 }
-
+@PostMapping("/Scoring/{userId}")
+public String scoreAccount(@PathVariable("userId")Long userId){
+	String ac=Investser.scoreAccount(userId);
+	return ac;}
 }

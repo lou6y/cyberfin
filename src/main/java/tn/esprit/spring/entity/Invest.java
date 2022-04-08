@@ -1,6 +1,7 @@
 package tn.esprit.spring.entity;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.persistence.Id;
@@ -26,14 +27,12 @@ public class Invest implements Serializable {
 	@Column(name = "Amount")
 	private int amount;
 
-	@Column(name = "Interest_Rate")
-	private double interest;
+	
 
 	@Column(name = "Invest_Start_Date")
-	private LocalDateTime Investstart;
+	private LocalDate Investstart;
 
-	@Column(name = "Invest_End_Date")
-	private LocalDateTime Investend;
+	
 
 	@Column(name = "Email")
 	private String Email;
@@ -46,15 +45,15 @@ public class Invest implements Serializable {
 		Invest.serialVersionUID = serialVersionUID;
 	}
 
-	public Invest(int userId, int amount, double interest, LocalDateTime investstart, LocalDateTime investend,
+	public Invest(int userId, int amount, LocalDate investstart,
 			String email) {
 		super();
 
 		this.userId = userId;
 		this.amount = amount;
-		this.interest = interest;
+		
 		Investstart = investstart;
-		Investend = investend;
+		
 		Email = email;
 	}
 
@@ -74,30 +73,19 @@ public class Invest implements Serializable {
 		this.amount = amount;
 	}
 
-	public double getInterest() {
-		return interest;
-	}
 
-	public void setInterest(double interest) {
-		this.interest = interest;
-	}
 
-	public LocalDateTime getInveststart() {
+
+	public LocalDate getInveststart() {
 		return Investstart;
 	}
 
-	public void setInveststart(LocalDateTime investstart) {
+	public void setInveststart(LocalDate investstart) {
 		Investstart = investstart;
 	}
 
-	public LocalDateTime getInvestend() {
-		return Investend;
-	}
 
-	public void setInvestend(LocalDateTime investend) {
-		Investend = investend;
-	}
-
+	
 	public String getEmail() {
 		return Email;
 	}

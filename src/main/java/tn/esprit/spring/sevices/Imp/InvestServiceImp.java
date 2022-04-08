@@ -1,10 +1,16 @@
 package tn.esprit.spring.sevices.Imp;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.Month;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
 import tn.esprit.spring.entity.Invest;
 import tn.esprit.spring.entity.repository.InvestRepository;
@@ -68,43 +74,65 @@ public class InvestServiceImp implements InvestServices{
 	}
 
 
+@Override
+	public float EvaluateSeniority(Long id_account) {
+		Invest pc = retrieveInvest(id_account);
+		LocalDate ld = pc.getInveststart();
+		long Seniority = ld.until(LocalDate.now(), ChronoUnit.YEARS);
+		if (Seniority > 5) {
+			return 1;
+		} else {
+			if (Seniority > 3)
+				return 0.5f;
+		}
 
+		return 0;
+	}
+@Override
+public String scoreAccount(Long idClient) {
+	Invest pc = retrieveInvest(idClient);
 	
-                   
-       
-   
-	/**
+	 float score =  (float) (0.5 * EvaluateSeniority(idClient)+  0.5 * pc.getAmount()
 	
+	);
+	
+	if (score>100) {
+		
+		return "his account is a premium account with a score of :\t"+score;
+		
+	}else if (score<100 && score > 70) {
+		
+		return "This account is a golden account with a score of :\t"+score;
+	}else if (score<70 && score > 40) {
+		
+		return "This account is a silver account with a score of :\t"+score;
+	}else if (score<40) {
+		
+		return "This account is a bronze account with a score of : \t"+score;
+	}
+	return null;
+		
+}
+	
+  
 	@Override
-	public double ajouterInterets( int getSolde ,int duree)
-	{ 
-	
-		   if (diffday<30 )
-		   return getSolde ;
-		   
-		   double PMTV =getSolde*(1+10/100);
-		   
-		    if (diffday>30 )
-               return Math.round(PMTV);
+	public float ajouterInterets(long accountId){ 
+	       LocalDate today = LocalDate.now();
+		   if (today.getMonth() == Month.APRIL && today.getDayOfMonth()==8) {
+			   float PMTV = retrieveInvest(accountId).getAmount()*(1+10/100);
+			   return PMTV;
+		   }
+		return 0;
+		
+		  
+              
+			
     
 }
     }
     
-    
-    (import static java.time.temporal.ChronoUnit.SECONDS)
-    @Test
-    
-public void diffday( Date firstDate)
-  throws ParseException {
- 
-    
-    long diffInMillies = Math.abs(LocalDateTime.now() - firstDate.getTime());
-    long diff = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+   
 
-    assertEquals(6, diff);
-}
-
-
-	 */
+	 
 	
-}
+
