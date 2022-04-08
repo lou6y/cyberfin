@@ -36,7 +36,7 @@ public class UserController {
 		} 
 		
 	@GetMapping("getUser/{username}")
-	//@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('SUPERADMIN')")
         public Optional<User> getUser(@PathVariable("username")String username)
 		{
 		return userService.findByUsername(username);

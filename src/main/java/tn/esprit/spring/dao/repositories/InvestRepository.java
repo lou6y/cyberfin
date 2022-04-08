@@ -13,5 +13,5 @@ import tn.esprit.spring.dao.entities.Invest;
 public interface InvestRepository extends JpaRepository<Invest, Long>{
 
 	@Query("SELECT Count(i) FROM Invest i WHERE i.Investstart > :date AND i.accountinvest = :accountid")
-	int ListTransactionLastdate(@Param("date") Date date, @Param("accountid") Long accountid);	
+	int NbTransactionLastdate(@Param("date") Date date, @Param("accountid") Long accountid);	
 }

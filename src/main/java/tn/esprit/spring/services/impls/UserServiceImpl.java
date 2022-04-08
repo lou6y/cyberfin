@@ -26,6 +26,9 @@ import tn.esprit.spring.dao.entities.Job;
 import tn.esprit.spring.dao.entities.Role;
 import tn.esprit.spring.dao.entities.User;
 import tn.esprit.spring.dao.repositories.AccountRepository;
+import tn.esprit.spring.dao.repositories.AssociationRepository;
+import tn.esprit.spring.dao.repositories.InvestRepository;
+import tn.esprit.spring.dao.repositories.LoanRepository;
 import tn.esprit.spring.dao.repositories.RoleRepository;
 import tn.esprit.spring.dao.repositories.TransactionRepository;
 import tn.esprit.spring.dao.repositories.UserRepository;
@@ -47,6 +50,16 @@ public class UserServiceImpl implements IUserService, IRoleService{
 	  
 	  @Autowired
 	  TransactionRepository transactRepository;
+	  
+	  @Autowired
+	  InvestRepository investRepository;
+	  
+	  @Autowired
+	  LoanRepository loanRepository;
+	  
+	  @Autowired
+	  AssociationRepository associationRepository;
+	  
 	  
 	  @Autowired
 		private JavaMailSender mailSender;
@@ -280,14 +293,14 @@ public class UserServiceImpl implements IUserService, IRoleService{
 			    	score += 1;
 			    if (user.getAccount().getBalance() > 500 )
 			    	score += 1;
-			 // score nb transactions last 1 year ( 0 -> 2 )
-			    int nbtransactions = transactRepository.NbTransactionLastdate(date2, user.getId());
+			 // score nb transactions last 1 month ( 0 -> 2 )
+			    int nbtransactions = transactRepository.NbTransactionLastdate(date, user.getAccount().getId());
 			    if (nbtransactions < 3)
 				    score +=1;
 					else score +=2;
-			 // score nb investment for investors ( 0 -> 4 )
+			 // score nb investment for investors last 1 year ( 0 -> 4 )
 			    if (user.getRoles().contains("ROLE_INVESTOR"))
-			    { int nbinvest= user.getAccount().getInvests().size();
+			    { int nbinvest= investRepository.NbTransactionLastdate(date2, user.getAccount().getId());
 			    if (nbinvest < 3)
 					score+=1;
 					else if (nbinvest < 5)
@@ -298,13 +311,13 @@ public class UserServiceImpl implements IUserService, IRoleService{
 			    }
 			    if (user.getRoles().contains("ROLE_CLIENT"))
 			    {
-			    // score nb loans for clients ( 0 -> 2) & score nb associations for clients ( 0 -> 2)
+			    // score nb loans for clients ( 0 -> 2) & score nb associations for clients last 1 year ( 0 -> 2)
 			    // ( 0 -> 4)
-			    int nbloan=user.getAccount().getLoans().size();
+			    int nbloan= loanRepository.NbLoanLastdate(date2, user.getAccount().getId());
 			    if (nbloan < 3)
 			    score +=1;
 				else score +=2;
-			    int nbassociation=user.getAccount().getAssociations().size();
+			    int nbassociation= associationRepository.NbAssociationLastdate(date2, user.getAccount().getId());
 			    if (nbassociation < 3)
 		    	score +=1;
 			    else score +=2;
