@@ -1,6 +1,8 @@
 package tn.esprit.spring.DAO.entities;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -11,7 +13,21 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@RequiredArgsConstructor
+@ToString
 @Table( name = "T_FEEDBACK")
 public class Feedback implements Serializable{
 
@@ -20,7 +36,7 @@ public class Feedback implements Serializable{
 
 	
 	@Column(name="idFeedback")
-	private Long idFeedback;
+	@NonNull private Long idFeedback;
 	
 	@Column(name="descriptionFeedback")
 	private String descriptionFeedback;
@@ -32,7 +48,7 @@ public class Feedback implements Serializable{
 	@ManyToOne
 	Offer offer;
 	
-
+/*
 	@Override
 	public String toString() {
 		return "Feedback [idFeedback=" + idFeedback + ", descriptionFeedback=" + descriptionFeedback + ", rateFeedback="
@@ -97,6 +113,6 @@ public class Feedback implements Serializable{
 		super();
 		
 	}
-	
+	*/
 
 }
