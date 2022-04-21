@@ -5,6 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.paypal.api.payments.Links;
@@ -27,7 +28,7 @@ public class PaypalController {
 		return "home";
 	}
 
-	@PostMapping("/pay")
+	@RequestMapping("/pay")
 	public String payment(@ModelAttribute("order") Order order) {
 		try {
 			Payment payment = service.createPayment(order.getPrice(), order.getCurrency(), order.getMethod(),

@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.repository.query.Param;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,6 +48,7 @@ import tn.esprit.spring.DAO.repositories.PaymentRepository;
 import tn.esprit.spring.DAO.repositories.TransactHistoryRepository;
 
 @RestController
+//@CrossOrigin(origins="http://localhost:4200/")
 @RequestMapping("/transaction")
 public class TransactionRestController {
 	
@@ -205,6 +207,11 @@ public class TransactionRestController {
 					
 					//SET NEW BALANCE nekhou alih 10dt
 					 newBalance1 = currentBalance1 + depositAmount -taxperdeposit;
+					 
+					 // W NSOBHOM FEL TREASURY
+					 double oldtreasuryamount=treasuryService.getTreasury(treasuryamount);
+						double currenttreasuryamount= oldtreasuryamount+10;
+						treasuryService.changeTreasury(currenttreasuryamount);
 					
 					//UPDATE ACCOUNT BALANCE:
 					transactionRepository.changeAccountBalanceById(newBalance1, accountID);
@@ -215,6 +222,10 @@ public class TransactionRestController {
 			        if(nbtransactionsbytype>=5) {
 			        	double newBalanceifdeposit5= newBalance1+taxperdeposit;
 			        	transactionRepository.changeAccountBalanceById(newBalanceifdeposit5, accountID);
+			        	
+						
+						
+			        	
 			        }
 			        	
 					
@@ -271,12 +282,16 @@ public class TransactionRestController {
 			            return "You Have insufficient Funds to perform this Transfer!";
 			        }
 			        
-			      //if nb claim fel transfer>5 ma3atech nekhou alih tax// AVEC JOINTURE 
+			      
 			        
 			        double  currentBalanceOfAccountTransferringTo = transactionRepository.getAccountBalance(transferToId);
 
-			        // SET NEW BALANCE://NZID NEKHOU 3AL TRANSFERINGFROM TAX
+			        // SET NEW BALANCE://NZID NEKHOU 3AL TRANSFERINGFROM TAX=5DT
 			        double newBalanceOfAccountTransferringFrom = currentBalanceOfAccountTransferringFrom - transferAmount -taxpertransfer;
+			        
+			        double oldtreasuryamount=treasuryService.getTreasury(treasuryamount);
+					double currenttreasuryamount= oldtreasuryamount+taxpertransfer;
+					treasuryService.changeTreasury(currenttreasuryamount);
 
 			        double newBalanceOfAccountTransferringTo = currentBalanceOfAccountTransferringTo + transferAmount;
 
@@ -289,6 +304,7 @@ public class TransactionRestController {
 			        // if Successful Transaction: n3amer f table transaction
 			        transactionService.historiqueTransact(transferFromId, "Transfer", transferAmount, "online", "success", "Transfer Transaction Successful",currentDateTime);
 
+			        //COUNT FEL JOIN
 			        // if numberclaims by type transfer>2 nsem7ou fel tax li na7ithoulou
 			        int numberclaimsbytype= claimRepository.getnumberclaimsbytype(transferFromId,"Transfer");
 			        if(numberclaimsbytype>=2) {
@@ -298,18 +314,16 @@ public class TransactionRestController {
 
 			        
 			        
-			        //if balance=0 nzidou 10 fel compte w ndeclanchi el @scheduled
-			        if (newBalanceOfAccountTransferringFrom ==0) {
-			        	isEnabled=true;
+			        //if balance=0 nzidou 10 fel compte 
+			        
+			        	if(newBalanceOfAccountTransferringFrom < 0) {
+						double zieda=15;
+						transactionRepository.changeAccountBalanceById( zieda, transferFromId);
 						
-						double bl= newBalanceOfAccountTransferringFrom +=10;
-						transactionRepository.changeAccountBalanceById( bl, transferFromId);
-						//fixedDelayMethod();   //KHEDMETT
-						do {
-						double oldtreasuryamount=treasuryService.getTreasury(treasuryamount);
-						double currenttreasuryamount= oldtreasuryamount-10;
+						 oldtreasuryamount=treasuryService.getTreasury(treasuryamount);
+						currenttreasuryamount= oldtreasuryamount-zieda;
 						treasuryService.changeTreasury(currenttreasuryamount);
-						}while (newBalanceOfAccountTransferringFrom ==0 );
+						
 						return "added 10";
 					}
 			         
@@ -448,11 +462,12 @@ public class TransactionRestController {
 			            //tet3amer f table transaction
 			          transactionService.historiqueTransact(accountID, "Payment", paymentAmount, "online", "failed", "Insufficient Funds", currentDateTime);
 			          
-			          //SINON MECH BECH YA3REF RECLAMATION 3ALA ENA TRANSACTION TJI (LEZEM NA3REF L ID MTE3HA EKA ALECH 3MALT gettransctionit by currentdatetime
+			          //SINON MECH BECH YA3REF RECLAMATION 3ALA ENA TRANSACTION TJI (LEZEM NA3REF L ID MTE3HA EKA ALECH 3MALT gettransctionid by currentdatetime
 			        //bech najamt nrecuperi el transaction_id mta3 el claim fel transactionrestcontroller
 			     	 //findtransactionidbycreattime= findTopByOrderByTransactIdDesc(currentDateTime)
 			          Long transaction_transaction_id=claimService.findTopByOrderByTransactIdDesc(currentDateTime);
 			          
+	//table reclamation tet3amar 7aseb el transaction create_at w mech 7aseb transaction_id(khater mech passe en param) w mech hasb accoun_id khater yebda 3amel akther men transac de type payment w failed donc recuperit el transaction id haseb el create_at
 			        //tjini reclamation automatique
 			          claimService.failedTransact(transaction_transaction_id,accountID,"Payment",paymentAmount, "online","failed", "Insufficient Funds", currentDateTime, "not treated");  
 			         			            			     
