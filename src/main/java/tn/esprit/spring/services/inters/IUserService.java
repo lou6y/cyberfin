@@ -25,6 +25,8 @@ public interface IUserService {
 	List<User> showAllUsers();
 	List<User> showUsersByJob(Job job);
 	List<User> showUsersByRole(Set<Role> roles);
+	String updateUser(Long id, User user);
+	String modifyRole(Long id, ERole role);
 	String modifyName(String username, String name);
 	String modifyEmail(String username, String Email);
 	String deleteUser(Long id);

@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -215,6 +216,48 @@ public class UserServiceImpl implements IUserService, IRoleService{
 	}
 	
 	@Override
+	public String updateUser(Long id, User user) {
+		Optional<User> userOptional = userRepository.findById(id);
+		if (!userOptional.isPresent()) {
+			return "Invalid id.";
+		}
+		else 
+		{
+		User _user = userOptional.get();
+		_user.setUsername(user.getUsername());
+		_user.setName(user.getName());
+		_user.setLastname(user.getLastname());
+		_user.setEmail(user.getEmail());
+		_user.setPassword(user.getPassword());
+		_user.setPassword(bCryptPasswordEncoder.encode(_user.getPassword()));
+		_user.setDateBirth(user.getDateBirth());
+		_user.setProfilePic(user.getProfilePic());
+		userRepository.save(_user);
+		return "Your account successfully updated.";
+		}
+	}
+	
+	@Override
+	@Transactional
+	public String modifyRole(Long id, ERole role) {
+		Optional<User> userOptional = userRepository.findById(id);
+		Optional<Role> roleOptional = roleRepository.findByName(role);
+		if (!userOptional.isPresent()) {
+			return "Invalid id.";
+		}
+		else 
+		{
+		User _user = userOptional.get();
+		Role _role = roleOptional.get();
+		_user.getRoles().add(_role);
+		userRepository.save(_user);
+		return "Role successfully updated."; 
+		}
+		
+	}
+
+	
+	@Override
 	public String modifyName(String username, String name )
 	{
 		Optional<User> userOptional = userRepository.findByUsername(username);
@@ -225,6 +268,7 @@ public class UserServiceImpl implements IUserService, IRoleService{
 		{
 			User user = userOptional.get();
 			user.setName(name);
+			userRepository.save(user);
 			return "Your name successfully updated.";
 		}
 		
@@ -241,6 +285,7 @@ public class UserServiceImpl implements IUserService, IRoleService{
 		{
 			User user = userOptional.get();
 			user.setEmail(Email);
+			userRepository.save(user);
 			return "Your email successfully updated.";
 		}
 		
@@ -338,4 +383,5 @@ public class UserServiceImpl implements IUserService, IRoleService{
 		}
 
 }
+	
 }

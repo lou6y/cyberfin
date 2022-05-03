@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import tn.esprit.spring.dao.entities.ERole;
 import tn.esprit.spring.dao.entities.Job;
 import tn.esprit.spring.dao.entities.Role;
 import tn.esprit.spring.dao.entities.User;
@@ -36,7 +38,7 @@ public class UserController {
 		} 
 		
 	@GetMapping("getUser/{username}")
-	@PreAuthorize("hasRole('SUPERADMIN')")
+	@PreAuthorize("hasRole('ADMIN')")
         public Optional<User> getUser(@PathVariable("username")String username)
 		{
 		return userService.findByUsername(username);
@@ -55,7 +57,21 @@ public class UserController {
 		{
 			return userService.showUsersByRole(roles);
 		}
+	
+	@PutMapping("/updateUser/{idUser}")
+	//@PreAuthorize("hasRole('ADMIN')")
+	public String updateUser(@PathVariable("idUser")Long idUser, @RequestBody User user)
+	{
+		return userService.updateUser(idUser, user);
+	}
 	 
+	@PutMapping("/modifyRole/{idUser}")
+	//@PreAuthorize("hasRole('ADMIN')")
+	public String modifyRole(@PathVariable("idUser")Long idUser, @RequestParam ERole role)
+	{
+		return userService.modifyRole(idUser, role);
+	}
+	
 	@PutMapping("/modify-name/{username}")
 	//@PreAuthorize("hasRole('ADMIN')")
 	   public String modifyName(@PathVariable("username")String username, @RequestParam String name) 
