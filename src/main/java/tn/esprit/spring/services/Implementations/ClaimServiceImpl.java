@@ -49,9 +49,9 @@ public class ClaimServiceImpl implements ClaimService{
 	
 	
 	@Override
-	public void failedTransact(Long transaction_transaction_id, Long account_id, String transaction_type,
+	public void failedTransact(Long transaction_id, Long account_id, String transaction_type,
 			double amount, String source, String status, String reason_code, LocalDateTime created_at, String state) {
-		ClaimRep.failedTransaction(transaction_transaction_id, account_id, transaction_type, amount, source,  status,reason_code, created_at, state);
+		ClaimRep.failedTransaction(transaction_id, account_id, transaction_type, amount, source,  status,reason_code, created_at, state);
 	
 	}
 

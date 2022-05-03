@@ -31,10 +31,10 @@ public interface ClaimRepository extends CrudRepository<Claim, Long> {
 	//insert (AUDIT TRAIL)
 	 @Modifying
 	    @Transactional
-	    @Query(value = "INSERT INTO Claim(transaction_transaction_id, account_id,transaction_type ,amount, source, status, reason_code, created_at, state)" +
-	            "VALUES(:transaction_transaction_id, :account_id, :transact_type, :amount, :source, :status, :reason_code, :created_at, :state)", nativeQuery = true)
+	    @Query(value = "INSERT INTO Claim(transaction_id, account_id,transaction_type ,amount, source, status, reason_code, created_at, state)" +
+	            "VALUES(:transaction_id, :account_id, :transact_type, :amount, :source, :status, :reason_code, :created_at, :state)", nativeQuery = true)
 	    public void failedTransaction(
-	    					@Param("transaction_transaction_id")Long transaction_transaction_id,
+	    					@Param("transaction_id")Long transaction_id,
 	    					@Param("account_id")Long account_id,
 	                        @Param("transact_type")String transact_type,
 	                        @Param("amount")double amount,

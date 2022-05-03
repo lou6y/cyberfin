@@ -48,7 +48,7 @@ import tn.esprit.spring.DAO.repositories.PaymentRepository;
 import tn.esprit.spring.DAO.repositories.TransactHistoryRepository;
 
 @RestController
-//@CrossOrigin(origins="http://localhost:4200/")
+@CrossOrigin(origins="*")
 @RequestMapping("/transaction")
 public class TransactionRestController {
 	
@@ -149,6 +149,32 @@ public class TransactionRestController {
 	    {
 	        return transactionService.retrieveTransactionByTransactType(transaction_type) ;
 	    }
+		
+///////////ANGULAR		
+		
+		@GetMapping("/retrieve-all-accounts")
+		@ResponseBody
+		public List<Account> getAccounts() {
+			List<Account> listAccounts = transactionService.retrieveAllAccounts();
+			return listAccounts;
+			}
+		
+		@GetMapping("/getaccountbalance/{account_id}")
+		@ResponseBody
+		public double getAccountBalance(@PathVariable Long account_id)
+	    {
+	        return transactionRepository.getAccountBalance(account_id) ;
+	    }
+		
+		@PutMapping("/changeaccountbalancebyid/{balance}/{account_id}")
+		@ResponseBody
+	    void changeAccountBalanceById(@PathVariable double balance, @PathVariable Long account_id) {
+			
+			transactionRepository.changeAccountBalanceById(balance,account_id);
+		}
+		
+//////////		
+		
 		
 		
 /*
@@ -274,10 +300,10 @@ public class TransactionRestController {
 			            transactionService.historiqueTransact(transferFromId, "Transfer", transferAmount, "online", "failed", "Insufficient Fund", currentDateTime);
 			            
 			          //SINON MECH BECH YA3REF RECLAMATION 3ALA ENA TRANSACTION TJI (LEZEM NA3REF L ID MTE3HA EKA ALECH 3MALT gettransctionid by currentdatetime(w mech account_id sinon yraja3li barcha results)
-				          Long transaction_transaction_id=claimService.findTopByOrderByTransactIdDesc(currentDateTime);
+				          Long transaction_id=claimService.findTopByOrderByTransactIdDesc(currentDateTime);
 				          
 				        //tjini reclamation automatique
-				          claimService.failedTransact(transaction_transaction_id,transferFromId ,"Transfer",transferAmount, "online","failed", "Insufficient Funds", currentDateTime, "not treated");  
+				          claimService.failedTransact(transaction_id,transferFromId ,"Transfer",transferAmount, "online","failed", "Insufficient Funds", currentDateTime, "not treated");  
 				          
 			            return "You Have insufficient Funds to perform this Transfer!";
 			        }
@@ -400,10 +426,10 @@ public class TransactionRestController {
 			            transactionService.historiqueTransact(accountID1, "Withdrawal", withdrawal_amount, "online", "failed", "Insufficient Funds", currentDateTime);
 			            
 			            
-			            Long transaction_transaction_id=claimService.findTopByOrderByTransactIdDesc(currentDateTime);
+			            Long transaction_id=claimService.findTopByOrderByTransactIdDesc(currentDateTime);
 				          
 				        //tjini reclamation automatique
-				          claimService.failedTransact(transaction_transaction_id,accountID1 ,"Withdrawal",withdrawal_amount, "online","failed", "Insufficient Funds", currentDateTime, "not treated");
+				          claimService.failedTransact(transaction_id,accountID1 ,"Withdrawal",withdrawal_amount, "online","failed", "Insufficient Funds", currentDateTime, "not treated");
 			            
 			            return "You Have insufficient Funds to perform this Withdrawal!";
 			        }
@@ -465,11 +491,11 @@ public class TransactionRestController {
 			          //SINON MECH BECH YA3REF RECLAMATION 3ALA ENA TRANSACTION TJI (LEZEM NA3REF L ID MTE3HA EKA ALECH 3MALT gettransctionid by currentdatetime
 			        //bech najamt nrecuperi el transaction_id mta3 el claim fel transactionrestcontroller
 			     	 //findtransactionidbycreattime= findTopByOrderByTransactIdDesc(currentDateTime)
-			          Long transaction_transaction_id=claimService.findTopByOrderByTransactIdDesc(currentDateTime);
+			          Long transaction_id=claimService.findTopByOrderByTransactIdDesc(currentDateTime);
 			          
 	//table reclamation tet3amar 7aseb el transaction create_at w mech 7aseb transaction_id(khater mech passe en param) w mech hasb accoun_id khater yebda 3amel akther men transac de type payment w failed donc recuperit el transaction id haseb el create_at
 			        //tjini reclamation automatique
-			          claimService.failedTransact(transaction_transaction_id,accountID,"Payment",paymentAmount, "online","failed", "Insufficient Funds", currentDateTime, "not treated");  
+			          claimService.failedTransact(transaction_id,accountID,"Payment",paymentAmount, "online","failed", "Insufficient Funds", currentDateTime, "not treated");  
 			         			            			     
 			            return "You Have insufficient Funds to perform this payment";
 			        }

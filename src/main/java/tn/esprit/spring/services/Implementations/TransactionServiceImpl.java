@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import tn.esprit.spring.DAO.entities.Account;
 import tn.esprit.spring.DAO.entities.Transaction;
+import tn.esprit.spring.DAO.repositories.AccountRepository;
 import tn.esprit.spring.DAO.repositories.TransactionRepository;
 import tn.esprit.spring.services.Interfaces.TransactionService;
 
@@ -25,6 +27,9 @@ public class TransactionServiceImpl implements TransactionService{
 	
 	@Autowired
 	TransactionRepository TransactionRep;
+	
+	@Autowired
+	AccountRepository AccountRep;
 	
 	@Override
 	public List<Transaction> retrieveAllTransactions() {
@@ -108,6 +113,13 @@ public class TransactionServiceImpl implements TransactionService{
 	//INSERT
 	public void historiqueTransact( Long account_id,String transaction_type, double amount,String source,String status, String reason_code,LocalDateTime created_at){		
 		TransactionRep.historiqueTransaction(account_id,transaction_type,amount, source, status, reason_code, created_at);
+	}
+
+	@Override
+	public List<Account> retrieveAllAccounts() {
+		List<Account> accounts= (List<Account>)(AccountRep.findAll());
+		//traja3ali de type iterable , donc nrodha traja3 type client
+		return accounts;
 	} 
 	
 		

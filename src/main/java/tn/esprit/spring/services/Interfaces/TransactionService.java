@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import tn.esprit.spring.DAO.entities.Account;
 import tn.esprit.spring.DAO.entities.Transaction;
 
 
@@ -30,6 +31,9 @@ public interface TransactionService {
 
 	//lel scheduled
 	List<Transaction> retrieveTransactionByAccid(Long account_id);
+	
+	
+	List<Account> retrieveAllAccounts();
 	
 	
 

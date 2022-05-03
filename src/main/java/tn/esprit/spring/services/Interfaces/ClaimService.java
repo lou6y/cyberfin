@@ -20,7 +20,7 @@ public interface ClaimService {
 	Claim retrieveClaim(Long id);
 
 	//insert
-	void failedTransact(Long transaction_transaction_id, Long account_id,String transaction_type, double amount,String source,String status, String reason_code,LocalDateTime created_at,String state);
+	void failedTransact(Long transaction_id, Long account_id,String transaction_type, double amount,String source,String status, String reason_code,LocalDateTime created_at,String state);
 
 	Long findTopByOrderByTransactIdDesc(LocalDateTime created_at);
 	

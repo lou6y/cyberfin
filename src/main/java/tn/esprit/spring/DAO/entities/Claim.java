@@ -5,15 +5,18 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.springframework.beans.factory.annotation.Value;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 //RECLAMATION LEL FAILED TRANSACTION/PAYMENT
 
@@ -25,8 +28,10 @@ public class Claim implements Serializable{
 	@GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long claim_id;
 	
+	@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	@JsonBackReference
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name="transaction_id")
 	Transaction transaction;
 	private Long account_id;
     private String transaction_type;
