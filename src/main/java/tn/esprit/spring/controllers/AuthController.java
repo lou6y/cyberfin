@@ -32,6 +32,7 @@ import tn.esprit.spring.dao.entities.User;
 import tn.esprit.spring.security.JwtUtils;
 import tn.esprit.spring.model.request.LogOutRequest;
 import tn.esprit.spring.model.request.LoginRequest;
+import tn.esprit.spring.model.request.ResetPasswordRequest;
 import tn.esprit.spring.model.request.SignupRequest;
 import tn.esprit.spring.model.request.TokenRefreshRequest;
 import tn.esprit.spring.model.response.JwtResponse;
@@ -176,7 +177,7 @@ public class AuthController {
 	}
   
   @PostMapping("/forgot-password")
-	public String forgotPassword(@RequestParam String email) throws UnsupportedEncodingException, MessagingException {
+	public String forgotPassword(@RequestBody String email) throws UnsupportedEncodingException, MessagingException {
 
 		String response = userService.forgotPassword(email);
 
@@ -188,10 +189,8 @@ public class AuthController {
 	}
   
   @PutMapping("/reset-password")
-	public String resetPassword(@RequestParam String token,
-			@RequestParam String password) {
-
-		return userService.resetPassword(token, password);
+	public String resetPassword(@RequestBody ResetPasswordRequest rpr) {
+    return userService.resetPassword(rpr.getToken(), rpr.getPassword());
 	}
 }
 

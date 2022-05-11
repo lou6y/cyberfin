@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.mail.MessagingException;
 
+import tn.esprit.spring.dao.entities.Account;
 import tn.esprit.spring.dao.entities.ERole;
 import tn.esprit.spring.dao.entities.Job;
 import tn.esprit.spring.dao.entities.Role;
@@ -32,6 +33,8 @@ public interface IUserService {
 	String deleteUser(Long id);
 	Long balanceByJob(Job job);
 	void scoring();
+	Optional<Account> findAccount(Long idaccount);
+	int countByJob(Job job);
 
 
 }

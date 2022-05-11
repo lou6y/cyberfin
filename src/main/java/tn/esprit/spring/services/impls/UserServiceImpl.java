@@ -89,6 +89,20 @@ public class UserServiceImpl implements IUserService, IRoleService{
 	}
 
 	@Override
+	public Optional<Account> findAccount(Long iduser)
+	{
+		Optional<User> userOptional = userRepository.findById(iduser);
+		if (!userOptional.isPresent()) {
+			return null;
+		}
+		else 
+		{
+		User _user = userOptional.get();
+		return accountRepository.findById(_user.getAccount().getId());
+		}
+	}
+	
+	@Override
 	public User saveUser(User user) {
 		String randomCode = RandomString.make(64);
 	    user.setVerificationCode(randomCode);
@@ -209,6 +223,12 @@ public class UserServiceImpl implements IUserService, IRoleService{
 	public List<User> showUsersByJob(Job job) {
 		return userRepository.findUsersByJob(job);
 	}
+	
+	@Override
+	public int countByJob(Job job)
+	{
+		return userRepository.countByJob(job);
+	}
 
 	@Override
 	public List<User> showUsersByRole(Set<Role> roles) {
@@ -230,8 +250,10 @@ public class UserServiceImpl implements IUserService, IRoleService{
 		_user.setEmail(user.getEmail());
 		_user.setPassword(user.getPassword());
 		_user.setPassword(bCryptPasswordEncoder.encode(_user.getPassword()));
+		_user.setJob(user.getJob());
 		_user.setDateBirth(user.getDateBirth());
 		_user.setProfilePic(user.getProfilePic());
+		_user.setGender(user.getGender());
 		userRepository.save(_user);
 		return "Your account successfully updated.";
 		}

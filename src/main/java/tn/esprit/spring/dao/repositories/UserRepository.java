@@ -31,6 +31,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
   Optional<User> findBycreationDateGreaterThan(Date
 		  date);
   
+  @Query("SELECT count(u) FROM User u WHERE u.job= ?1")
+	int countByJob(Job job);
+  
   @Query("SELECT u FROM User u WHERE u.job= ?1")
 	List<User> findUsersByJob(Job job);
 	

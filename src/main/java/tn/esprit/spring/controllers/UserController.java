@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import tn.esprit.spring.dao.entities.Account;
 import tn.esprit.spring.dao.entities.ERole;
 import tn.esprit.spring.dao.entities.Job;
 import tn.esprit.spring.dao.entities.Role;
@@ -38,7 +39,7 @@ public class UserController {
 		} 
 		
 	@GetMapping("getUser/{username}")
-	@PreAuthorize("hasRole('ADMIN')")
+	// @PreAuthorize("hasRole('ADMIN')")
         public Optional<User> getUser(@PathVariable("username")String username)
 		{
 		return userService.findByUsername(username);
@@ -50,6 +51,13 @@ public class UserController {
 		{
 			return userService.showUsersByJob(job);
 		}
+	
+	@GetMapping("/countbyjob/{job}")
+	//@PreAuthorize("hasRole('ADMIN')")
+        public int countByJob(@PathVariable("job") Job job)
+		{
+			return userService.countByJob(job);
+		}
 		
 	@GetMapping("/getusersbyrole/{roles}")
 	//@PreAuthorize("hasRole('ADMIN')")
@@ -57,6 +65,14 @@ public class UserController {
 		{
 			return userService.showUsersByRole(roles);
 		}
+	
+	@GetMapping("/getAccount/{iduser}")
+	//@PreAuthorize("hasRole('ADMIN')")
+    public Optional<Account> getAccount(@PathVariable("iduser")Long iduser)
+    {
+		return userService.findAccount(iduser);
+    	
+    }
 	
 	@PutMapping("/updateUser/{idUser}")
 	//@PreAuthorize("hasRole('ADMIN')")
